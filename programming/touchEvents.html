@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Touch Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {
+        font-family: sans-serif;
+    }
+    .elementToTouch{
+        background: rgba(0, 0, 0, .8);
+        color: lightblue;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Touch Events</h1>
+    <h3>
+        In order to provide quality support for touch-based user interfaces, touch events offer the
+        ability to interpret finger (or stylus) activity on touch screens or trackpads. Touch events
+        are similar to mouse events except they support simultaneous touches and at different locations
+        on the touch surface.
+    </h3>
+    <h4>Interfaces</h4>
+    <ul>
+        <li>
+            The <code>TouchEvent</code> interface encapsulates all of the touch points that are currently active.
+            <ul>
+                <li>
+                    changedTouches: A TouchList of all the Touch objects representing individual points
+                    of contact whose states changed between the previous touch event and this one.
+                </li>
+                <li>
+                    targetTouches: A TouchList of all the Touch objects representing all current points of
+                    contact with the surface, regardless of target or changed status.
+                </li>
+                <li>
+                    touches: A TouchList of all the Touch objects representing all current points of contact with
+                    the surface, regardless of target or changed status.
+                </li>
+            </ul>
+        </li>
+        <li>
+            The <code>Touch</code> interface, which represents a single touch point, includes information such as the
+            position of the touch point relative to the browser viewport.
+        </li>
+        <li>
+            The <code>TouchList</code> interface represents a group of touches; this is used when the user has, for example,
+            multiple fingers of the surface at the same time.
+        </li>
+    </ul>
+    <div class="elementToTouch" id="touchElement">
+        Element to Activate Touch
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        startup();
+    });
+    var touchElement;
+    function startup(){
+        console.log('startup init');
+        touchElement = document.getElementById('touchElement');
+
+        touchElement.addEventListener('touchstart', (evt) => {
+            /*
+            This keeps the browser from continuing to process the touch event.
+            This also prevents a mouse event from being delivered.
+            */
+            evt.preventDefault();
+            console.log('touchstart', evt);
+        }, false);
+
+        touchElement.addEventListener('touchend', (evt) => {
+            evt.preventDefault();
+            console.log('touchend', evt);
+        }, false);
+
+        touchElement.addEventListener('touchcancel', (evt) => {
+            evt.preventDefault();
+        }, false);
+
+        touchElement.addEventListener('touchmove', (evt) => {
+            evt.preventDefault();
+        }, false);
+    }
+    </script>
+</body>
+</html>

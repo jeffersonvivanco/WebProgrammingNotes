@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CSS Gradients</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        font-family: sans-serif;
+        font-size: 12px;
+    }
+    .success {
+        /*
+        Gradient Hints
+        * By default, the gradient transitions smoothly from one color to the next. You can include a color hint to move the
+        midpoint of the transition value to a certain point along the gradient. ex: linear-gradient(blue, 10%, pink)
+
+        Changing the direction
+        * By default, linear gradients run from top to bottom. You can change the direction by specifying a direction.
+        ex: linear-gradient(to right, blue, pink)
+
+        Diagonal Gradients
+        * You can even make the gradient run diagonally, from corner to corner. ex: linear-gradient(to bottom right, blue, pink)
+
+        Using angles
+        * If you want more control over its direction, you can give the gradient a specific angle. ex: linear-gradient(70deg, blue, pink)
+
+        Using more than two colors
+        * You don't have to limit yourself to two colors--you may use as many as you like! By default, colors are evenly spaced out
+        along the gradient.
+
+        Positioning color stops
+        * You don't have to leave your color stops at their default positions. To fine-tune their locations, you can give each one
+        zero, one, or two percentage or absolute length values. ex: linear-gradient(to left, lime 28px, red 77%, cyan);
+        radial-gradient(red 10px, yellow 30%);
+
+        Creating hard lines
+        * To create a hard line between two colors, creating a stripe instead of a gradual transition, adjacent color stops can be
+        set to the same location. ex: linear-gradient(to bottom left, cyan 50%, palegoldenrod 50%)
+
+        Creating color brands & stripes
+        * To include a solid, non-transitioning color area within a gradient, include two positions for the color stop. Color stops
+        can have two positions, which is equivalent to two consecutive color stops with the same color at different positions. The
+        color will reach full saturation at first color stop, maintain that saturation through the second color stop, and transition
+        to the adjacent color stop's color through the adjacent color stop's first position. ex: look at class .multiposition-stop2
+        and .multiposition-stops
+
+        Controlling the Progression of a Gradient
+        * By default, a gradient evenly progresses between the colors of two adjacent color stops, with the midpoint between those
+        two color stops being the midpoint value. You can control the interpolation, or progression, between two color stops by
+        including a color hint location.
+
+        Overlaying Gradients
+        * Gradients support transparency, so you can stack multiple backgrounds to achieve some pretty fancy effects. The backgrounds
+        are stacked from top to bottom, with the first specified being on top. ex: look at class .layered-image
+
+        Stacked Gradients
+        * You can even stack gradients with other gradients. As long as the top gradients aren't entirely opaque, the gradients below
+        will still be visible. This applies to radial gradients as well. As well as repeating gradients.
+
+        */
+        background: linear-gradient(to right, rgb(3, 238, 42), 10%,  rgb(99, 184, 253));
+        width: 300px;
+        height: 100px;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3em;
+    }
+    .multiposition-stop2 {
+        background: linear-gradient(to left, 
+        lime 25%, red 25%, red 50%, cyan 50%, cyan 75%, yellow 75% ); 
+        background: linear-gradient(to left, 
+        lime 25%, red 25% 50%, cyan 50% 75%, yellow 75% );
+        width: 300px;
+        height: 100px;
+    }
+    .multiposition-stops {
+        background: linear-gradient(to left, 
+        lime 20%, red 30%, red 45%, cyan 55%, cyan 70%, yellow 80% );  
+        background: linear-gradient(to left, 
+        lime 20%, red 30% 45%, cyan 55% 70%, yellow 80% );
+        width: 300px;
+        height: 100px;
+    }
+    .layered-image {
+        background: linear-gradient(to right, transparent, mistyrose), url("./assets/DSC03806.jpg");
+        width: 100%;
+        height: 500px;
+        background-size: cover;
+        background-position: center center;
+    }
+    .simple-radial {
+        /* 
+        Using radial gradients
+        * You can make them circular "circle" or elliptical "ellipse". By default, the center of the gradient is at the 50% 50%
+        mark, and the gradient is elliptical matching the aspect ratio of its box.
+
+        Positioning the center of the gradient
+        * You can position the center of the gradient with keyterms, percentage, or absolute lengths, length and percentage
+        values repeating if only one is present, otherwise in the order of position from the left and position from the top.
+        ex: radial-gradient(at 0% 30%, red 10px, yellow 30%);
+
+        Sizing radial gradients
+        * Unlike linear gradients, you can specify the size of radial gradients. Possible values include "closest-corner",
+        "closest-side", "farthest-corner", and "farthest-side", with "farthest-corner" the default.
+        */
+        background: radial-gradient(blue, red);
+        width: 400px;
+        height: 400px;
+    }
+    .repeating-linear {
+        /* 
+        Using repeating gradients
+        * The size of the gradient line that repeats is the length between the first color stop value and the last color stop
+        length value. If the last color stop has just a color and no color stop length, the value defaults to 0, meaning the
+        linear gradient will not repeat and the radial gradient will only repeat if the radius of the gradient is smaller than
+        the length between the center of the gradient and the farthest corner.
+        */
+        background: repeating-linear-gradient(-45deg, red, red 5px, blue 5px, blue 10px);
+        width: 300px;
+        height: 300px;
+    }
+    .text-gradient {
+        background: linear-gradient(to right, red, black);
+        font-size: 7em;
+        color: transparent;
+        display: inline-block;
+        background-clip: text;
+    }
+    </style>
+</head>
+<body>
+    <div class="success">
+        Success!
+    </div>
+    <div class="multiposition-stop2"></div>
+    <div class="multiposition-stops"></div>
+    <div class="layered-image"></div>
+    <div class="simple-radial"></div>
+    <div class="repeating-linear"></div>
+    <h1 class="text-gradient">Hello World</h1>
+</body>
+</html>

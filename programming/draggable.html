@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace
+        }
+        * {
+            box-sizing: content-box;
+        }
+        .box {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            cursor: pointer;
+        }
+        .blue {
+            background: lightblue;
+        }
+        .red {
+            background: red;
+        }
+        .green {
+            background: green;
+        }
+        .container {
+            background: rgba(0, 0, 0, .5);
+            display: flex;
+            justify-content: space-around;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>HTML 5 Draggable</h1>
+    <p>By default, only images, links, and selections are draggable. 
+        To make another html element draggable, 3 things must be done.
+    </p>
+    <ol>
+        <li>Set the <code>draggable</code> attribute to <code>true</code> on the element
+        you wish to make draggable.</li>
+        <li>Add a listener for the <code>dragstart</code> event.</li>
+        <li>Set the drag data within the listener defined above.</li>
+    </ol>
+    <p>When a user begins to drag, the <code>dragstart</code> event is fired. Within the
+    <code>dragstart</code> event, you can specify the drag data, the feedback image, and 
+    the drag effects. However, only the drag data is required; the default image and drag
+    effects are suitable in many situations.</p>
+    
+
+    <!-- EXAMPLE -->
+    <div class="container" id="container"></div>
+
+    <script>
+        var fam = [
+            {name: 'Jeff', color: 'blue'},
+            {name: 'Zen', color: 'red'},
+            {name: 'Buzz', color: 'green'}
+        ];
+        var famMap = new Map();
+        var container; // container where dragging is allowed
+        var dragged;
+        function dragstart_handler(evt){
+            evt.dataTransfer.setData('text/plain', evt.target.id);
+
+            // create an image and then use it for the drag image
+            // var img = new Image();
+            // img.src = 'image_not_found.jpg';
+            // img.style.width = 100;
+            // evt.dataTransfer.setDragImage(img, 100, 100);
+
+            // set the drag effect to move
+            evt.dataTransfer.dragEffect = 'move';
+        }
+
+        function set_fam(){
+            famMap.clear(); // to make sure map is clean everytime
+            let id = 0; // id that will be use to tell elements apart when dragging them
+            for(let f of fam){
+                let box = document.createElement('div');
+                box.setAttribute('draggable', true);
+                box.setAttribute('ondragstart', 'dragstart_handler(event)');
+                box.setAttribute('class', ['box', f.color].join(' '));
+                let idVal = `draggable${id}`; // generating id attribute
+                box.setAttribute('id', idVal); // setting id attribute
+                famMap.set(idVal, f); // adding value to map with id as key
+                let nameH1 = document.createElement('h1');
+                nameH1.setAttribute('draggable', false);
+                nameH1.innerHTML = f.name;
+                box.appendChild(nameH1);
+                container.appendChild(box);
+                id += 1; // incrementing id val;
+            }
+        }
+
+        function update_fam(){
+            let container_children = container.childNodes;
+            fam = []; // resetting fam array to reorder based on ui ordering
+            for(let c of container_children){
+                let id = c.id;
+                fam_person = famMap.get(id);
+                fam.push(fam_person);
+            }
+        }
+
+        function setContainerListeners(){
+            container.addEventListener('drag', (event)=> {
+                // events fired on the draggable target
+            });
+            container.addEventListener('dragstart', (event) => {
+                // store a ref on the dragged element
+                dragged = event.target;
+                // make it half transparent
+                dragged.style.opacity = .5;
+            });
+            container.addEventListener('dragend', (event) => {
+                // reset the transparency
+                dragged.style.opacity = 1;
+                // console data and see if it matches UI
+                console.log('[Debug] fam', fam);
+            });
+            container.addEventListener('dragover', (event) => {
+                // events fired on the drop targets
+                event.preventDefault();
+                if(dragged.id === event.target.id) return;
+                if(event.target.parentNode.classList.contains('container')){
+                    container.insertBefore(dragged, event.target);
+                    return;
+                } 
+                if(event.target.classList.contains('container')) {
+                    container.appendChild(dragged);
+                    return;
+                }
+            });
+
+            container.addEventListener('dragenter', (event) => {
+                // highlight potential drop target when the draggable element enters it
+
+            });
+            
+            container.addEventListener('dragleave', (event) => {
+                // reset background of potential drop target when the draggable element leaves it
+            });
+
+            container.addEventListener('drop', (event) => {
+                // prevent default action (open as link for some elements)
+                event.preventDefault();
+                // move dragged elem to the selected drop target
+                if(dragged.id === event.target.id)return;
+                if(event.target.parentNode.classList.contains('container')){
+                    if(container.contains(dragged)) container.removeChild(dragged);
+                    container.insertBefore(dragged, event.target);
+                    update_fam();
+                } else if(event.target.classList.contains('container')) {
+                    if(container.contains(dragged)) container.removeChild(dragged);
+                    container.appendChild(dragged);
+                    update_fam();
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            container = document.getElementById('container');
+            setContainerListeners();
+            set_fam();
+        });
+
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+
+    <style>
+    body {
+        font-family: monospace;
+    }
+    .container {
+        width: 100%;
+    }
+    .box {
+        /* Height to be good has to be 400px */
+        height: 0;
+        /* Width to be good has to be 300px */
+        width: 0;
+        box-shadow: 0 0 5px;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        transition-property: width, height, opacity;
+        transition-duration: .5s;
+        transition-timing-function: ease-in-out;
+        overflow: hidden;
+        opacity: 0;
+        z-index: 200;
+        background-color: white;
+    }
+    .boxOpen {
+        height: 400px;
+        width: 300px;
+        opacity: 1;
+    }
+    .svgCircle {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        width: 120px; 
+        height: 120px;
+        transition: width, height, opacity;
+        transition-duration: .5s;
+        transition-timing-function: ease-in-out;
+        opacity: 1;
+    }
+    .svgCircleOpen {
+        width: 300px; 
+        height: 300px;
+        opacity: 0;
+    }
+    .svgCircle circle{
+        fill: blue;
+    }
+    .svgCircle circle:hover{
+        filter: drop-shadow(0 0 5px);
+    }
+    .overlay {
+        background: rgba(0, 0, 0);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        transition-property: opacity, display;
+        transition-duration: .5s;
+        transition-timing-function: ease-in-out;
+        z-index: 100;
+        display: none;
+    }
+    .overlayOpen {
+        opacity: .5;
+        display: unset;
+    }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Tweening</h1>
+    <p>
+    displays a seamless progression of changes applied to a component or element over time.
+    for example, a switch can move smoothly across a screen by tweening to its position, or a floating action button (FAB) can transform into a card by tweening FAB size and corner radius.
+    </p>
+    <section class="container">
+        <section class="box" id="box">
+            <h1 style="text-align: center;">This is a box!</h1>
+            <button onclick="closeBox()">Close</button>
+        </section>
+        <svg id="svgCircle" class="svgCircle" id="button1" onclick="openBox()">
+            <circle cx="50%" cy="50%" r="42%"></circle>
+        </svg>
+    </section>
+    <section id="overlay" class="overlay"></section>
+    <script>
+    document.addEventListener('DOMContentLoaded', start);
+
+    function start(){
+        console.log('started ...');
+    }
+
+    function openBox(){
+        let box = document.getElementById('box');
+        // let h = 0;
+        // let i = setInterval(() => {
+        //     h += 10;
+        //     box.style.height = h + 'px';
+        //     if (h === 300) clearInterval(i);
+        // }, 10);
+        // console.log('clicked svg button');
+        box.classList.add('boxOpen');
+
+        let svgCircle = document.getElementById('svgCircle');
+        svgCircle.classList.add('svgCircleOpen');
+
+        let overlay = document.getElementById('overlay');
+        overlay.classList.add('overlayOpen');
+    }
+
+    function closeBox(){
+        let overlay = document.getElementById('overlay');
+        overlay.classList.remove('overlayOpen');
+
+        let box = document.getElementById('box');
+        box.classList.remove('boxOpen');
+        let svgCircle = document.getElementById('svgCircle');
+        svgCircle.classList.remove('svgCircleOpen');
+    }
+    </script>
+</body>
+</html>

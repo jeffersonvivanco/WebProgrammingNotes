@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Transitions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+        }
+        .ball {
+            background-color: blue;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            transition: transform 2s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Transitions</h1>
+    <h3>Using JS</h3>
+    <section>
+        <div id="ball" class="ball"></div>
+        <button onclick="move()">Move</button>
+        <button onclick="reset()">Reset</button>
+    </section>
+
+    <script>
+        var moved = false;
+        function move(){
+            moved = true;
+            let ball = document.getElementById('ball');
+            ball.style.transform = 'translateX(500px)';
+        }
+        function reset(){
+            if (!moved) return;
+            let ball = document.getElementById('ball');
+            ball.style.transform = 'translateX(0)';
+            moved = false;
+        }
+    </script>
+</body>
+</html>

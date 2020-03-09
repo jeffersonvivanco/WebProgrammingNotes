@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+    body {
+        font-family: monospace;
+    }
+    img {
+        width: 400px;
+        height: auto;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .dissolveContainer {
+        position: relative;
+        width: 600px;
+        height: 400px;
+        padding: 0;
+    }
+    .dissolvedImage {
+        opacity: 1;
+        transition: opacity .5s ease-in;
+    }
+    .dissolvedImage:hover {
+        opacity: 0;
+    }
+    .box1 {
+        background-color: blue;
+        color: white;
+        width: 200px;
+        height: 200px;
+    }
+    .showBox {
+        animation: color-me-in 2s ease-in;
+        animation-fill-mode: forwards;
+    }
+    .hideBox {
+        animation: color-me-out 2s ease-in;
+        animation-fill-mode: forwards;
+    }
+    .box2 {
+        background-color: green;
+        color: white;
+        width: 200px;
+        height: 200px;
+    }
+    @keyframes color-me-in {
+        0% {
+            display: none;
+            opacity: 0;
+        }
+        1% {
+            display: block;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    @keyframes color-me-out {
+        0% {
+            opacity: 1;
+        }
+        99% {
+            opacity: 0;
+        }
+        100% {
+            display: none;
+        }
+    }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Fading</h1>
+    <h2>Dissolve</h2>
+    <p>creates a smooth transition between elements that completely overlap one another, 
+        such as photos inside a card or other container. A foreground element fades in 
+        (appears) or out (disappears) to show or hide an element behind it.</p>
+    <section class="dissolveContainer">
+        <img src="../assets/DSC03636.jpg"/>
+        <img src="../assets/DSC03806.jpg" class="dissolvedImage"/>
+    </section>
+    <h2>Fade through</h2>
+    <section>
+        <section class="box1" id="box1">
+            <h3>Box 1</h3>
+            <button onclick="showBox2()">Show box 2</button>
+        </section>
+        <section class="box2" id="box2">
+            <h3>Box 2</h3>
+            <button onclick="showBox1()">Show box 1</button>
+        </section>
+    </section>
+
+    <script>
+        function showBox2(){
+            let box1 = document.getElementById('box1');
+            let box2 = document.getElementById('box2');
+            box1.classList.remove('showBox');
+            box1.classList.add('hideBox');
+            box2.classList.remove('hideBox');
+            box2.classList.add('showBox');
+        }
+        function showBox1(){
+            let box1 = document.getElementById('box1');
+            let box2 = document.getElementById('box2');
+            box2.classList.remove('showBox');
+            box2.classList.add('hideBox');
+            box1.classList.remove('hideBox');
+            box1.classList.add('showBox');
+        }
+    </script>
+</body>
+</html>

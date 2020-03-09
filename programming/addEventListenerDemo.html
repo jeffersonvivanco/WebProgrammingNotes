@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Add Event Listener Demo</title>
+    <style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .my-button {
+        border: 1px solid blue;
+        border-radius: 5px;
+    }
+    #button1 {
+        width: 200px;
+        height: 200px;
+    }
+    #button2 {
+        width: 100px;
+        height: 100px;
+    }
+    </style>
+</head>
+<body>
+    <div class="my-button" id="button1">Click Me!
+        <div class="my-button" id="button2">Click Me!</div>
+    </div>
+    <script>
+    const myButton = document.getElementById('button1');
+    const myButton2 = document.getElementById('button2');
+    var something = 'Data!';
+    myButton.addEventListener('click', function(evt) {
+        alert(`You clicked me! button1 ${something}`);
+    }, false);
+    myButton2.addEventListener('click', function(evt) {
+        alert(`You clicked me! button2 ${something}`);
+        something = 'Data changed!';
+    }, false);
+    </script>
+</body>
+</html>

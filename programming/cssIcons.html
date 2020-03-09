@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CSS Icons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="script" type="text/xml" href="./assets/my_icons.svg" id="mysvg" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        @font-face {
+            font-family: "jv-icons";
+            src: url("./assets/my_icons.svg")
+        }
+        .icon {
+            width: 400px;
+            height: 400px;
+            fill: blue;
+        }
+        .full_screen::after {
+            stroke: green;
+            fill: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Icons</h1>
+    <!-- <img src="./assets/my_icons.svg" /> -->
+    <svg viewBox="50% 50% 100 100" class="icon">
+        <use xlink:href="./assets/my_icons.svg#close"></use>
+    </svg>
+    <svg viewBox="50% 50% 100 100" class="icon full_screen">
+        <use xlink:href="./assets/my_icons.svg#full_screen"></use>
+    </svg>
+</body>
+</html>

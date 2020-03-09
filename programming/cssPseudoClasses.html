@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CSS PSEUDO-CLASSES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-size: 12px;
+            font-family: monospace;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .helloButton:active {
+            color: blue;
+            background-color: lightblue;
+        }
+        .r1 input:checked + label {
+            color: red;
+        }
+        .r1 input[type="radio"]:checked {
+            box-shadow: 0 0 0 3px orange;
+        }
+        .r1 input[type="checkbox"]:checked {
+            box-shadow: 0 0 0 3px hotpink;
+        }
+        .r1 option:checked {
+            box-shadow: 0 0 0 3px lime;
+            color: red;
+            background-color: black;
+        }
+        #expand-toggle {
+            display: none;
+        }
+        #expand-toggle:checked ~ #expand-btn {
+            background-color: blue;
+            color: white;
+        }
+        #expand-btn {
+            padding: 10px;
+            background-color: skyblue;
+            border: 1px solid blue;
+            border-radius: 5px;
+        }
+        .disabledInput input[type="text"]:disabled {
+            background-color: #ccc;
+            color: pink;
+        }
+        .emptyBox {
+            width: 100px;
+            height: 100px;
+        }
+        .emptyBox:empty {
+            background-color: grey;
+        }
+        .div1 {
+            width: 100px;
+            height: 100px; 
+        }
+        .div1:not(:-webkit-full-screen){
+            background-color: red;
+        }
+        .div1:-webkit-full-screen {
+            background-color: blue;
+        }
+        .div1:not(:-moz-full-screen) {
+            background-color: red;
+        }
+        .div1:-moz-full-screen {
+            background-color: blue;
+        }
+        .withFancyFocus:focus {
+            color: violet;
+            font-weight: bold;
+            outline: blueviolet;
+        }
+        .withFancyFocus:in-range {
+            background-color: rgba(13, 236, 50, 0.5)
+        }
+        .withFancyFocus:out-of-range {
+            background-color: rgba(230, 42, 17, 0.5)
+        }
+        .withFancyFocusWithin:focus-within {
+            background-color: khaki;
+        }
+        .formValidation input:invalid {
+            background-color: rgba(230, 42, 17, 0.5);
+        }
+        .formValidation input:placeholder-shown {
+            color: blue;
+        }
+        .myContainer > :not(:last-child) {
+            margin-bottom: 20px;
+        }
+        .myContainer :only-child {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="myContainer">
+        <div>
+            <div>
+                <div>First Child</div>
+                <div>1st Child Other Child</div>
+            </div>
+            <div>1st Child's Second Child</div>
+        </div>
+        <div>Second Child</div>
+        <div>Third Child</div>
+        <div>Last Child</div>
+    </div>
+    <div class="myContainer">
+        <div>Only Child</div>
+    </div>
+    <button class="helloButton">Hello, this button uses :active to turn blue when clicked</button>
+    <div class="r1">
+        <input type="radio" name="my-input" id="yes">
+        <label for="yes">Yes</label>
+        
+        <input type="radio" name="my-input" id="no">
+        <label for="no">No</label>
+
+        <input type="checkbox" name="my-checkbox" id="opt-in">
+        <label for="opt-in">Check me!</label>
+
+        <select name="my-select" id="fruit">
+            <option value="opt1">Apples</option>
+            <option value="opt2">Grapes</option>
+            <option value="opt3">Pears</option>
+        </select>
+    </div>
+    <br>
+    <br>
+    <input type="checkbox" id="expand-toggle">
+    <label for="expand-toggle" id="expand-btn">Custom Checkbox</label>
+    <br>
+    <br>
+    <br>
+    <div class="disabledInput">
+        <input class="disabledInput" disabled placeholder="Disabled input ...." type="text"/>
+    </div>
+    <div class="emptyBox"></div>
+    <div class="div1">
+        <button onclick="enterFullscreenAPI()" class="helloButton">Hello</button>
+    </div>
+    <div class="withFancyFocusWithin">
+        <input class="withFancyFocus" type="text" placeholder="Firstname" />
+        <input class="withFancyFocus" type="text" placeholder="Lastname" />
+        <input class="withFancyFocus" type="number" min="0" max="12">
+    </div>
+    <form class="formValidation">
+        <h3>Form with valdidation</h3>
+        <input type="text" placeholder="email@email.com">
+    </form>
+    <script>
+        function enterFullscreenAPI(){
+            let elem = document.querySelector('.div1');
+
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+        function exit(){
+            if (document.exitFullscreen) document.exitFullscreen();
+            if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            if (document.msExitFullscreen) document.msExitFullscreen();
+        }
+    </script>
+</body>
+</html>

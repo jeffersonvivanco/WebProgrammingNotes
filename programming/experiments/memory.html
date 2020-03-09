@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-size: 12px;
+        }
+        .memory {
+            background: black;
+            width: 100%;
+            height: 300px;
+            color: greenyellow;
+            font-family: monospace;
+            font-size: 2em;
+            overflow-wrap:break-word;
+            overflow: hidden;
+            animation-name: bits;
+            animation-delay: 2ms;
+            animation-iteration-count: infinite;
+            animation-duration: 1s;
+            animation-direction:alternate-reverse;
+            animation-timing-function:ease-in-out;
+        }
+        .memory::after {
+            content: '0101010101011101010101001101010001010001010101010010101010100101010101010100101010101010101010101'
+            '0101010101011101010101001101010001010001010101010010101010100101010101010100101010101010101010101'
+            '0101010101011101010101001101010001010001010101010010101010100101010101010100101010101010101010101'
+            '0101010101011101010101001101010001010001010101010010101010100101010101010100101010101010101010101'
+            '01010101010111010101010011010100010100010101010100101010101001010101010101001010101010101010101010010101';
+        }
+        section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 300px;
+            row-gap: 10px;
+            justify-items: center;
+            column-gap: 10px;
+            max-width: 900px;
+            margin: auto;
+        }
+        /* animation */
+        @keyframes bits {
+            from {
+                color: greenyellow;
+            } to {
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+        <div class="memory"></div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fullscreen API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        .imgElement {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="imgElement">
+        <button onclick="exit()" style="position:absolute; top:0; right:10px;">Close</button>
+        <button onclick="enterFullscreenAPI(0)" style="position:absolute; top:0; left: 10px;">Enter Fullscreen</button>
+        <button onclick="enterFullscreenAPI(1)" style="position:absolute; top:0; left: 150px;">Next</button>
+        <img src="image_not_found.jpg" height="100%">
+    </div>
+    <div class="imgElement">
+        <button onclick="exit()" style="position:absolute; top:0; right:10px;">Close</button>
+        <button onclick="enterFullscreenAPI(1)" style="position:absolute; top:0; left: 10px;">Enter Fullscreen</button>
+        <img src="background01.jpg" height="100%">
+    </div>
+    
+    <script>
+        function enterFullscreenAPI(index){
+            let elem = Array.from(document.querySelectorAll('.imgElement'))[index];
+
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+        function exit(){
+            if (document.exitFullscreen) document.exitFullscreen();
+            if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            if (document.msExitFullscreen) document.msExitFullscreen();
+        }
+    </script>
+</body>
+</html>

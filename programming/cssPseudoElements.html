@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CSS Pseudoelements</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-size: 12px;
+            font-family: monospace;
+        }
+        .dialog::backdrop {
+            background-color: rgba(0, 0, 0, .2); 
+        }
+        .dialog {
+            border: 1px solid blue;
+            border-radius: 5px;        
+            top: 25px;
+        }
+        .p1::after {
+            content: '->';
+            color: greenyellow;
+            background-color: black;
+            font-size: 3em;
+        }
+        #tooltipB[data-descr] {
+            position: relative;
+        }
+        #tooltipB[data-descr]:hover::after {
+            content: attr(data-descr);
+            position: absolute;
+            left: 0;
+            top: 24px;
+            min-width: 200px;
+            border: 1px #aaaaaa solid;
+            border-radius: 10px;
+            background-color: #ffffcc;
+            padding: 12px;
+            color: black;
+            font-size: 2em;
+            z-index: 1;
+        }
+        q::before {
+            content: "<<";
+            color: blue;
+        }
+        q::after {
+            content: ">>";
+            color: blue;
+        }
+        li {
+            list-style-type: none;
+            position: relative;
+            margin: 2px;
+            padding: 0.5em 0.5em 0.5em 2em;
+            background-color: lightgrey;
+        }
+        li.done {
+            background-color: #ccff99;
+        }
+        li.done::before {
+            content: '';
+            position: absolute;
+            border-color: #009933;
+            border-style: solid;
+            border-width: 0 0.3em 0.25em 0;
+            height: 1em;
+            top: 1.3em;
+            left: 0.6em;
+            margin-top: -1em;
+            transform: rotate(45deg);
+            width: 0.5em;
+        }
+        .p2::first-letter {
+            font-weight: bold;
+            font-size: 2em;
+        }
+        .p3::first-line {
+            font-style: italic;
+        }
+        .p4::grammar-error {
+            color: pink;
+        }
+        .form-control {
+            width: 300px;
+        }
+        .form-control::placeholder {
+            color: blue;
+        }
+        .p5::selection {
+            color: skyblue;
+            background: black;
+        }
+        .p6::spelling-error {
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <dialog class="dialog">
+        <h3>This is a dialog.</h3>
+        <p>This is only works in Chrome, NOT in Firefox or Safari.</p>
+        <button onclick="closeModal()">Close</button>
+    </dialog>
+    <button onclick="showModal()">Show Modal</button>
+    <p class="p1">This uses ::after to add </p>
+    <button id="tooltipB" data-descr="This is a tooltip using css and ::after">ButtonWithToolTip</button>
+    <q>Hello World</q>
+    <h3>Todo List</h3>
+    <ul class="todoList">
+        <li onclick="checkItem(0)">Learn CSS</li>
+        <li onclick="checkItem(1)">Learn JAVA</li>
+        <li onclick="checkItem(2)">Get Photography Backpack</li>
+        <li onclick="checkItem(3)">Buy Christmas Presents</li>
+    </ul>
+    <p class="p2">Hello World, this is the store about a ...</p>
+    <p class="p3">
+        This first line is in italics. <br>
+        This second line should not be.
+    </p>
+    <p class="p4">
+        This sentence is grammatically incorrect ? . !
+    </p>
+    <input placeholder="Fullname placeholder is blue" class="form-control"/>
+    <p class="p5">Highlight for this is in blue, try it!</p>
+    <p class="p6">This worrd is spelled wrong</p>
+    <script>
+        var todolist = document.querySelector('.todoList').children;
+        function showModal(){
+            let dialog = document.querySelector('.dialog');
+            dialog.showModal();
+        }
+        function closeModal(){
+            let dialog = document.querySelector('.dialog');
+            dialog.close();
+        }
+        function checkItem(index){
+            todolist[index].classList.toggle('done');
+        }
+    </script>
+</body>
+</html>

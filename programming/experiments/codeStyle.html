@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Code Styling</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* General styling */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-size: 12px;
+        }
+        /* window content styling */
+        .codeWindowContainer {
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid black;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 100;
+            filter: drop-shadow(0 0 2px);
+        }
+        .codeWindowNav {
+            background-color: black;
+            height: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 0 0 0 10px;
+            border-top-right-radius: 10px;
+            border-top-left-radius: 10px;
+        }
+        .window {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transition-property: transform;
+            transition-duration: .5s;
+            padding: 10px;
+        }
+        .windows {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+        /* window specific content styling (ex: code, result window) */
+        .codeWindow {
+            background: #40026E;
+            color: white;
+            font-size: 1.2em;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+        .codeWindow pre {
+            margin: 0;
+        }
+        .htmlCode {
+            color: inherit;
+            background-color: transparent;
+            font-family: "source-code-pro",monospace;
+            border: none;
+            overflow-x: auto;
+            resize: none;
+            width: 100%;
+            font-size: inherit;
+        }
+        .resultWindow {
+            background-color: white;
+            transform: translateX(800px);
+        }
+        /* window close, open, minimize buttons styling */
+        .navButton {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .closeButton {
+            background-color: #CC1C1C;
+        }
+        .minButton {
+            background-color: #E5C410;
+        }
+        .expandButton {
+            background-color: #31E510;
+        }
+        /* window tab styling */
+        .navTab {
+            color: white;
+            width: 200px;
+            height: 100%;
+            padding: 5px 5px 5px 15px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            transition-property: background-color;
+            transition-duration: .5s;
+            cursor: default;
+            background-color: rgba(143, 57, 208, .6);
+        }
+        .navTab:hover {
+            background-color: rgba(143, 57, 208, 1);
+        }
+        .firstTab {
+            border-top-left-radius: 10px;
+        }
+        .activeTab {
+            background-color: rgba(143, 57, 208, .8);
+        }
+        .navTabBorder {
+            background-color: #31E510;
+            height: 2px;
+            width: 0;
+            bottom: 0;
+            left: 0;
+            position: absolute;
+        }
+        @keyframes borderfill {
+            from {
+                width: 0;
+            } to {
+                width: 200px;
+            }
+        }
+        .navTabAnimation {
+            animation-name: borderfill;
+            animation-duration: .5s;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- window includes the entire window -->
+<section class="codeWindowContainer">
+
+    <!-- includes close, open, minimize buttons, tabs -->
+    <nav class="codeWindowNav">
+        <div class="navButton closeButton"></div>
+        <div class="navButton minButton"></div>
+        <div class="navButton expandButton"></div>
+        <div style="width: 20px;">&nbsp;</div>
+        <div class="firstTab navTab activeTab" onclick="selectTab(event)" data-window="cWindow">
+            hello.html
+            <span class="navTabBorder navTabAnimation"></span>
+        </div>
+        <div class="navTab" onclick="selectTab(event)" data-window="rWindow">
+            hello.html(result)
+            <span class="navTabBorder"></span>
+        </div>
+    </nav>
+
+    <!-- window that holds all windows -->
+    <section class="windows">
+
+    <!-- code content, note: indentation matters -->
+    <article class="window codeWindow">
+
+<pre>
+<textarea class="htmlCode" rows="10" readonly>
+<h1>Hello World!</h1>
+<h2>By Jeff</h2>
+<h3>End</h3>
+</textarea>
+</pre>
+
+    </article>
+
+    <!-- result window showing what the code will look like if run -->
+    <article class="window resultWindow">
+
+<pre>
+<h1>Hello World!</h1>
+<h2>By Jeff</h2>
+<h3>End</h3>
+</pre>
+
+    </article>
+
+    </section>
+
+</section>
+
+<script>
+    var navTabBorders = [];
+    var windows = {};
+    var navTabs = [];
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        navTabBorders = Array.from(document.querySelectorAll('.navTabBorder'));
+        navTabs = Array.from(document.querySelectorAll('.navTab'));
+        cWindow = document.querySelector('.codeWindow');
+        rWindow = document.querySelector('.resultWindow');
+
+        if (cWindow) {
+            windows['cWindow'] = cWindow;
+        }
+        if (rWindow) {
+            windows['rWindow'] = rWindow;
+        }
+    });
+
+    // function is called when user clicks a tab
+    function selectTab(event){
+
+        let e = event.target;
+
+        // making all tabs not active
+        for (let nt of navTabs) nt.classList.remove('activeTab');
+        for (let n of navTabBorders) n.classList.remove('navTabAnimation');
+        
+        // making clicked tab active
+        e.classList.toggle('activeTab');
+        e.children[0].classList.toggle('navTabAnimation');
+
+        // showing window corresponding to tab selected
+        switch(e.dataset.window){
+            case 'cWindow':
+                cWindow.style.transform = 'translateX(0)';
+                rWindow.style.transform = 'translateX(800px)';
+                break;
+            case 'rWindow':
+                cWindow.style.transform = 'translateX(-800px)';
+                rWindow.style.transform = 'translateX(0)';
+                break;
+        }
+    }
+</script>
+</body>
+</html>

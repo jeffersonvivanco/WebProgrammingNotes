@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Transformations 3D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .viewBox {
+            width: 300px;
+            height: 150px;
+            box-shadow: 0 0 5px;
+        }
+        .vP1 {
+            transform: perspective(700px) rotateX(70deg) translate(100px, 0);
+        }
+        .vP2 {
+            transition: transform 1s ease;
+        }
+        .vP2:hover {
+            transform: perspective(700px) rotateY(20deg);
+        }
+        .vP3 {
+            transition: transform 1s ease;
+        }
+        .vP3:hover {
+            transform: perspective(700px) rotateZ(20deg);
+        }
+
+        /* Card Flip */
+        .cardFace {
+            width: 100%;
+            height: 100%;
+            color: white;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        .front {
+            background-color: blue;
+        }
+        .back {
+            background-color: red;
+            transform: rotateY(180deg);
+        }
+        .card {
+            width: 150px;
+            height: 300px;
+            transition: transform 1s ease;
+            position: relative;
+            transform-style: preserve-3d;
+            transform-origin: center left;
+        }
+        .card:hover {
+            transform: translateX(100%) rotateY(180deg);
+        }
+
+        /* 3D Carousel */
+        .scene {
+            perspective: 1000px;
+            width: 210px;
+            height: 140px;
+            position: relative;
+            margin: auto;
+        }
+        .carousel {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 2s ease;
+        }
+        .carousel:hover {
+            transform: rotateY(-160deg);
+        }
+        .cCell {
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+            background-color: rgba(90, 8, 243, 0.5);
+            width: 190px;
+            height: 120px;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        /* 
+        Rotating the faces
+        * This carousel has 9 cells. If each cell gets an equal distribution on the carousel, each panel would
+        be rotated 40deg from the next (360/9)
+
+        Outward Shift
+        * Drawing out a diagram of the carousel, we see that we only know two things: the width of each panel is 200px
+        and that each panel is rotated 40deg from the next. If we split one of these triangles (looking down at carousel, if
+        we connect the center with the edges of the panel, we see we get a rectangle) down its center, we get a right triangle.
+        * We can determine the length of r in this diagram with a basic tangent equation
+        tan = opposite / adjancent
+        tan(20deg) = 105px / r
+        r = 105px / tan(20deg)
+        r = 288px
+
+        JS
+        If we decide on changing the width of the panel or the number of panels, we only need to plug in those two variables
+        into our equation to the appropriate translateZ value.
+        var tz = Math.round( (cellSize / 2 ) / Math.tan( Math.PI / numberOfCells ) );
+        
+         */
+        .cCell:nth-child(1) {
+            transform: rotateY(0deg) translateZ(288px);
+        }
+        .cCell:nth-child(2) {
+            transform: rotateY(40deg) translateZ(288px);
+        }        
+        .cCell:nth-child(3) {
+            transform: rotateY(80deg) translateZ(288px);
+        }
+        .cCell:nth-child(4) {
+            transform: rotateY(120deg) translateZ(288px);
+        }
+        .cCell:nth-child(5) {
+            transform: rotateY(160deg) translateZ(288px);
+        }
+        .cCell:nth-child(6) {
+            transform: rotateY(200deg) translateZ(288px);
+        }
+        .cCell:nth-child(7) {
+            transform: rotateY(240deg) translateZ(288px);
+        }
+        .cCell:nth-child(8) {
+            transform: rotateY(280deg) translateZ(288px);
+        }
+        .cCell:nth-child(9) {
+            transform: rotateY(320deg) translateZ(288px);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Transformations 3D</h1>
+    <h3>Perspective RotateX</h3>
+    <div class="viewBox vP1"></div>
+    <h3>Perspective RotateY Hover</h3>
+    <div class="viewBox vP2"></div>
+    <h3>Perspective RotateZ Hover</h3>
+    <div class="viewBox vP3"></div>
+    <h3>Card Flip (hover in the middle)</h3>
+    <section style="perspective: 600px">
+        <div class="card">
+            <div class="cardFace front">
+                front
+            </div>
+            <div class="cardFace back">
+                back
+            </div>
+        </div>
+    </section>
+    <h3>3D Carousel</h3>
+    <section class="scene">
+        <div class="carousel">
+            <div class="cCell">1</div>
+            <div class="cCell">2</div>
+            <div class="cCell">3</div>
+            <div class="cCell">4</div>
+            <div class="cCell">5</div>
+            <div class="cCell">6</div>
+            <div class="cCell">7</div>
+            <div class="cCell">8</div>
+            <div class="cCell">9</div>
+        </div>
+    </section>
+    <br>
+    <br>
+    <br>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Staggering Animations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .box {
+            background-color: blue;
+            height: 50px;
+            width: 50px;
+            margin: 5px;
+            transition: transform .5s ease;
+        }
+        .container {
+            background-color: gainsboro;
+            width: 200px;
+            height: 250px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .container:
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Staggering Animations</h1>
+    <p>
+        Instead of animating a group of items all at once, we can recreate this same effect by staggering the animations.
+        When each item's animation is incrementally delayed, they appear as individuals, but still move collectively as a
+        whole. The result is captivating and feels more true to life.
+    </p>
+    <small style="color:red;"><bold>DO NOT CLICK ON THEM AT THE SAME TIME</bold></small>
+    <h3>Moving all items at once</h3>
+    <section style="width: 420px; display:flex; justify-content:space-between;">
+        <div class="container">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+        <div class="container"></div>
+    </section>
+    <button onclick="moveAllAtOnce()">Move Boxes</button>
+    <button onclick="staggerMove1()">Stagger Transitions with setTimeout</button>
+    <button onclick="frameBasedAnim()">Frame Based Animation</button>
+    <script>
+        var moved = false;
+        var m1s = [];
+        var m2s = [];
+        var d = 50;
+        var boxes = Array.from(document.querySelectorAll('.box'));
+        function moveAllAtOnce(){
+            moved = !moved;
+            let tX = moved ? '220px' : '0';
+            for(b of boxes){
+                b.style.transform = `translateX(${tX})`;
+            }
+        }
+        /*
+
+        setTimout
+
+        we can use setTimeout to stagger triggering the transitions. setTimeout will start
+        the transition later with a delay in JS
+        */
+        function staggerMove1(){
+            moved = !moved;
+            let tX = moved ? '220px' : '0';
+            let tO = 0;
+            m1s.forEach(m => clearTimeout(m));
+            m2s.forEach(m => clearTimeout(m));
+            boxes = boxes.reverse();
+            for(let b of boxes){
+                let m = setTimeout(() => {
+                    b.style.transform = `translateX(${tX})`;
+                }, tO * d);
+                m1s.push(m);
+                tO += 1;
+            }
+        }
+        /*
+
+        Frame-based animation
+
+        Using requestAnimationFrame allows us to have control of how each transition is triggered, when it is triggered.
+        */
+        var moveRAF;
+        var indexRAF = 0;
+        var txRAF = '220px';
+        var timeNowRAF;
+        function frameBasedAnim(){
+            if (moveRAF) {
+                cancelAnimationFrame(moveRAF);
+                indexRAF = 0;
+            }
+            moved = !moved;
+            txRAF = moved ? '220px' : '0';
+            boxes = boxes.reverse();
+            timeNowRAF = new Date();
+            staggerMove2();
+        }
+
+        function staggerMove2(){
+            moveRAF = requestAnimationFrame(staggerMove2);
+            boxes[indexRAF].style.transform = `translateX(${txRAF})`;
+            let timePassed = new Date() - timeNowRAF;
+            if (timePassed < 60) return;
+            timeNowRAF = new Date();
+            indexRAF += 1;
+            if (indexRAF === boxes.length) {
+                cancelAnimationFrame(moveRAF);
+                indexRAF = 0;
+                moveRAF = null;
+            }
+        }
+    </script>
+</body>
+</html>

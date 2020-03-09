@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Infinite Scrolling</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <script src="main.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+            min-height: 1500px;
+        }
+        .box {
+            width: 300px;
+            height: 300px;
+            border-radius: 12px;
+            font-size: 10em;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .box1 {
+            background-color: blueviolet;
+        }
+        .container {
+            display: grid;
+            width: 100%;
+            justify-content: center;
+        }
+        .endFooter {
+            height: 50px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Infinite Scrolling Demo</h1>
+    <section class="container"></section>
+    <footer class="endFooter">END</footer>
+    <script>
+        var container = document.querySelector('.container');
+        var endFooter = document.querySelector('.endFooter');
+        var numbers = [];
+        for (let x = 1; x <= 30; x ++)
+            numbers.push(x);
+    
+        var startIndex = 0;
+        var endIndex = 4;
+
+        function addBoxes(startIndex, endIndex){
+            for (let i = startIndex; i <= endIndex; i++){
+                let e = document.createElement('section');
+                e.classList.add('box', 'box1');
+                e.textContent = numbers[i];
+                container.appendChild(e);
+            }
+        }
+        // IntersectionObserver API
+        var options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 1
+        }
+        
+        var observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(e => {
+                if (e.isIntersecting && e.target.className === 'endFooter'){
+                    console.log('calling addBoxesEnd');
+                    if (endIndex >= numbers.length - 1){
+                        console.log('observer disconnecting!');
+                        this.observer.disconnect(); // disconnecting since we have loaded all elements
+                        return;
+                    }
+                    startIndex += 5;
+                    endIndex += 5;
+                    addBoxes(startIndex, endIndex);
+                }
+                else {
+                    console.log('not intersecting ',e);
+                }
+            });
+        });
+
+        function init(){
+            addBoxes(startIndex, endIndex); // adding initial boxes
+            observer.observe(endFooter);
+        }
+
+        document.addEventListener('load', init());
+    </script>
+</body>
+</html>

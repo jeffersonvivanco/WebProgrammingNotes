@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Input Experiment</title>
+    <style>
+    body {
+        font-size: 20px;
+    }
+    input:-moz-read-only {
+        border: none;
+    }
+    input:not(:-moz-read-only) {
+        border: 1px solid red;
+    }
+    </style>
+</head>
+<body>
+    <div>
+        <input placeholder="Name" value="Jefferson" readonly style="font-size: inherit;"/>
+    </div>
+    <button onclick="toggle()">Toggle readonly</button>
+    <script>
+    var r = true;
+    function toggle() {
+        r = !r;
+        document.body.querySelector('input').readOnly = r;
+    }
+    </script>
+</body>
+</html>

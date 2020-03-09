@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Request Animation Frame</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .circle {
+            background-color: blue;
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">requestAnimationFrame</h1>
+    <section>
+        <div class="circle"></div>
+        <button onclick="move()">Move</button>
+        <button onclick="stop()">Stop</button>
+    </section>
+    <script>
+        var tx = 10;
+        var circle = document.querySelector('.circle');
+        var drawRAF;
+        var forward = true, backward = false;
+        function move(){
+            if (!drawRAF) draw();
+        }
+        function draw(){
+            /*
+            How often is the draw function called ?
+
+            That all depends on the frame rate of your browser and computer, but typically it's 
+            60fps (which is cool as your computer's display typically refreshes at a rate of 60Hz).
+            */
+            drawRAF = requestAnimationFrame(draw);
+            
+            // drawing code goes here
+            circle.style.transform = `translateX(${tx}px)`;
+
+            if (forward) tx += 10;
+            if (backward) tx -= 10;
+
+            if (tx === 500) {
+                backward = true; 
+                forward = false;
+            }
+            if (tx === 0) {
+                forward = true; 
+                backward = false;
+            }
+
+        }
+
+        function stop(){
+            cancelAnimationFrame(drawRAF)
+            drawRAF = null;
+        }
+
+    </script>
+</body>
+</html>
