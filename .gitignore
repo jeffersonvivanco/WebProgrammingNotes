@@ -105,3 +105,7 @@ dist
 
 # VSCode
 .DS_Store
+
+# typecript js files
+programming_ts/**/*.js
+programming_ts/**/*.js.*
