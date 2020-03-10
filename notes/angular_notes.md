@@ -9,6 +9,19 @@
   * `ng add @angular/elements`
   * `ng add ngx-build-plus`
 
+* Mapping - a custom element hosts an Angular component, providing a bridge between the data and logic
+  defined in the component and standard DOM APIs. Component properties and logic maps directly into HTML
+  attributes and the browser's event system.
+  * the creation api parses the component looking for input properties, and defines corresponding attributes
+    for the custom element. It transforms the property names to make them compatible with custom elements,
+    which do not recognize case distinctions. The resulting attribute names use dash-separated lowercase.
+    For example, for a component with `@Input('myInputProp') inputProp`, the corresponding custom element
+    defines an attribute `my-input-prop`.
+  * component outputs are dispatched as HTML Custom Events, with the name of the custom event matching the
+    output name. For example, for a component with `@Output() valueChanged = new EventEmitter()`, the
+    corresponding custom element will dispatch events with the name "valueChanged", and the emitted data
+    will be stored on the event's `detail` property. If you provide an alias, that value is used.
+
 Steps
 1. Add component/components that you wish to create custom element to `entryComponents` list in `AppModule`
 2. Remove `AppComponent` from `bootstrap` list in `AppModule`
@@ -124,4 +137,13 @@ animations: [
 the a page (inserted or removed from the DOM), you can make the animations conditional. For example, use `*ngIf`
 with the animation trigger in the HTML template.
 
-## Dynamic Component Loader
+## Angular CLI Builders
+A number of Angular CLI commands run a complex process on your code, such as linting, building, or testing. The commands
+use an internal tool called Architect, to run *CLI builders*, which apply another tool to accomplish the desired task.
+With Angular 8, the CLI Builder API is stable and available to developers who want to customize the Angular CLI by adding
+or modifying commands. For example, you could supply a builder to perform an entirely new task, or to change which 3rd party
+tool is used by an existing command.
+
+### CLI Builders
+The internal Architect tool delegates work to handler functions called *builders*. A builder handler function receives
+2 arguments, a set of input `options` (a JSON object), and a `context` (a `BuilderContext` object).

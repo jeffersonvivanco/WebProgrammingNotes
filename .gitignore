@@ -109,3 +109,6 @@ dist
 # typecript js files
 programming_ts/**/*.js
 programming_ts/**/*.js.*
+
+#Idea
+.idea/

@@ -583,3 +583,148 @@ to be more complex than an array or a map. But when an array suffices, use an ar
 * This can be a barrier to composition--when various packages are using different data structures to describe
 similar things, combining them is difficult. Therefore, if you want to design for composatibility, find out
 what data structure other people are using, and, when possible, follow their example.
+
+## Standard Built-in Objects
+
+### Proxy
+The `Proxy` object is used to define custom behavior for fundamental operations (e.g. property lookup,
+assignment, enumeration, function invocations, etc.).
+
+* Terminology
+  * `handler` - placeholder object which contains traps
+  * traps - the methods that provide access property access. This is anologous to the concept of traps
+    in operating systems
+  * target - object which the proxy virtualizes. It is often used as storage backend for the proxy.
+    Invariants (semantics that remain unchanged) regarding object non-extensibility or non-configurable
+    properties are verfied against the target.
+* Syntax `const p = new Proxy(target, handler);`
+  * `target` - a target object to wrap with `Proxy`. It can be any sort of object, including a native
+    array, a function, or even another proxy.
+  * `handler` - an object whose properties are functions define the behavior of proxy `p` whan an
+    operation is performed on it.
+* Methods
+  * `Proxy.revocable()` - creates a revocable proxy object.
+* Methods of the handler object - the `handler` object is a placeholder object which contains traps
+  for `Proxy`. All traps are optional. **If a trap has not been defined, the default behavior is to
+  forward the operation to the target**.
+  * `handler.getPrototypeOf()` - a trap for `Object.getPrototypeOf`
+  * `handler.setPrototypeOd()` - a trap for `Object.setPrototypeOf`
+  * `handler.isExtensible()` - a trap for `Object.isExtensible`
+  * `handler.preventExtensions()` - a trap for `Object.preventExtensions`
+  * `handler.getOwnPropertyDescriptor()` - a trap for `Object.getOwnPropertyDescriptor`
+  * `handler.defineProperty()` - a trap for `Object.defineProperty`
+  * `handler.has()` - a trap for the `in` operator
+  * `handler.get()` - a trap for getting property values
+  * `handler.set()` - a trap for setting property values
+  * `handler.delete()` - a trap for the `delete` operator
+  * `handler.ownKeys()` - a trap for `Object.getOwnPropertyNames` and `Object.getOwnPropertySymbols`
+  * `handler.apply()` - a trap for a function call
+  * `handler.construct()` - a trap for the `new` operator
+
+### Object
+* Methods
+  * `Object.create()` - creates a new object with the specified prototype object and properties
+  * `Object.getOwnPropertyDescriptor()` - returns a property descriptor for a named property on an object
+  * `Object.getPrototypeOf()` - returns the `prototype` of the specified object
+
+## Eloquent Javascript
+
+### The secret life of Objects
+**Encapsulation**
+The core idea in object-oriented programming is to divide programs into smaller pieces and make each
+piece responsible for managing its own state. This way, some knowledge about the way a piece of the
+program works can be kept *local* to that piece. Someone working on the rest of the program does not
+have to remember or even be aware of that knowledge. Whenever these local details change, only the
+code directly around it needs to be updated. Different pieces of such a program interact with each
+other through *interfaces*, limited sets of functions or bindings that provide useful functionality
+at a more abstract level, hiding their precise implementation.
+
+Such program pieces are modeled using objects. Their interface consists of a specific set of methods
+and properties. Properties that are part of the interface are called *public*. The others, which
+outside code should not be touching, are called *private*. Many languages provide a way to distinguish
+public and private properties and prevent outside code from accessing the private ones altogether. JS
+once again taking the minimilist approach does not--yet at least. There is work underway to add this
+to the language. Even though the language doesn't have this disntinction built in, JS programmers are
+successfully using this idea. Typically, the available interface is described in documentation or comments.
+It is also common to put an underscore char `_` at the start of property names to indicate that
+those properties are private.
+
+Seperating interface from implementation is a great idea. It is usually called *encapsulation*.
+
+**Methods**
+Methods are nothing more than properties that hold function values. Ex:
+```js
+let ferret = {};
+ferret.speak = function(line) {
+  console.log(`the ferret says ${line}`);
+}
+ferret.speak('I am alive!'); // the ferret says I am alive!
+```
+
+Usually a method needs to do something with the object it was called on. When a function is called
+as a method--looked up as a property and immediately called, as in `object.method()`--the binding
+called `this` in its body automatically points at the object it was called on.
+```js
+function speak(line) {
+  console.log(`the ${this.name} says ${line}`);
+}
+let lion = {name: 'lion', speak};
+lion.speak('Roooaar'); // the lion says Rooooar
+```
+You can think of `this` as an extra parameter that is passed in a different way. If you want to
+pass it explicitly, you can use a function's `call` method, which takes the `this` value as its
+first argument and treats further arguments as normal parameters. `speak.call(lion, 'Rooaarr');`
+
+Since each function has its own `this` binding, whose value depends on the way it is called, you
+cannot refer to the `this` of the wrapping scope in a regular function defined with the `function`
+keyword.
+
+Arrow functions are different--they do not bind their own `this` but can see the `this` binding
+of the scope around them. Thus, you can do something like the following code, which references
+`this` from inside a local function:
+```js
+function normalize() {
+  console.log(this.coords.map(n => n / this.length));
+}
+normalize.call({coords: [0, 2, 3], length: 5});
+```
+If I had written the argument to `map` using the `function` keyword, the code wouldn't work.
+
+**Prototypes**
+In addition to their set properties, most objects also have also have a *prototype*. A prototype is
+another object that is used as a fallback source of properties. When an object gets a request for a
+property that it doesn't have, its prototype will be searched for the property, then the prototype's
+prototype, and so on.
+
+So who's the prototype of that empty object? It is the great ancestral prototype, the entity behind
+almost all objects, `Object.prototype`.
+
+The prototype relations of JS objects form a tree-shaped structure, and at the root of this structure
+sits `Object.prototype`. It provides a few methods that show up in all objects, such as `toString`, which
+converts an object to a string representation.
+
+Many objects don't directly have `Object.prototype` as their prototype but instead have another object
+that provides a different set of default properties. Functions derive from `Function.prototype` and
+arrays derive from `Array.prototype`.
+
+```js
+// prototype
+let protoFerret = {
+  speak(line) {
+    console.log(`the ${type} ferret says ${line}`);
+  }
+}
+let funFerret = Object.create(protoFerret);
+funFerret.type = 'fun';
+funFerret.speak('heeeeyyy'); // the fun ferret says heeeeyyy
+```
+A property like `speak(line)` in an object expression is a shorthand way of defining a method. It
+creates a property called `speak` and gives it a function as its value. The "proto" ferret acts as
+a container for the properties that are shared by all ferrets. An individual ferret object, like
+the funFerret, contains only properties that apply only to itself--in this case--its type--and derives
+shared properties from its prototype.
+
+**Classes**
+JS's prototype system can be interpreted as a somewhat informal take on an object-oriented concept
+called *classes*. A class defines the shape of a type of object--what methods and properties it
+has
