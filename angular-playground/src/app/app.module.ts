@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BasicFormComponent } from './basic-form/basic-form.component';
 import {BasicFormService} from './basic-form/basic-form.service';
-import {createCustomElement} from "@angular/elements";
+import {createCustomElement} from '@angular/elements';
 
 @NgModule({
   declarations: [

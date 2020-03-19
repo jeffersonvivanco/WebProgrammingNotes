@@ -147,3 +147,7 @@ tool is used by an existing command.
 ### CLI Builders
 The internal Architect tool delegates work to handler functions called *builders*. A builder handler function receives
 2 arguments, a set of input `options` (a JSON object), and a `context` (a `BuilderContext` object).
+
+## Deployment
+
+### Deferential Loading

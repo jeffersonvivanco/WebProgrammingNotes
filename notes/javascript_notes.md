@@ -588,7 +588,7 @@ what data structure other people are using, and, when possible, follow their exa
 
 ### Proxy
 The `Proxy` object is used to define custom behavior for fundamental operations (e.g. property lookup,
-assignment, enumeration, function invocations, etc.).
+assignment, enumeration, function invocations, etc.). ===> Look at `programming_js/my_proxy.js`
 
 * Terminology
   * `handler` - placeholder object which contains traps
@@ -603,23 +603,23 @@ assignment, enumeration, function invocations, etc.).
   * `handler` - an object whose properties are functions define the behavior of proxy `p` whan an
     operation is performed on it.
 * Methods
-  * `Proxy.revocable()` - creates a revocable proxy object.
+  * `Proxy.revocable(target, handler)` - creates a revocable proxy object.
 * Methods of the handler object - the `handler` object is a placeholder object which contains traps
   for `Proxy`. All traps are optional. **If a trap has not been defined, the default behavior is to
   forward the operation to the target**.
-  * `handler.getPrototypeOf()` - a trap for `Object.getPrototypeOf`
-  * `handler.setPrototypeOd()` - a trap for `Object.setPrototypeOf`
-  * `handler.isExtensible()` - a trap for `Object.isExtensible`
-  * `handler.preventExtensions()` - a trap for `Object.preventExtensions`
-  * `handler.getOwnPropertyDescriptor()` - a trap for `Object.getOwnPropertyDescriptor`
-  * `handler.defineProperty()` - a trap for `Object.defineProperty`
-  * `handler.has()` - a trap for the `in` operator
-  * `handler.get()` - a trap for getting property values
-  * `handler.set()` - a trap for setting property values
-  * `handler.delete()` - a trap for the `delete` operator
-  * `handler.ownKeys()` - a trap for `Object.getOwnPropertyNames` and `Object.getOwnPropertySymbols`
-  * `handler.apply()` - a trap for a function call
-  * `handler.construct()` - a trap for the `new` operator
+  * `handler.getPrototypeOf(target)` - a trap for `Object.getPrototypeOf`
+  * `handler.setPrototypeOf(target, prototype)` - a trap for `Object.setPrototypeOf`
+  * `handler.isExtensible(target)` - a trap for `Object.isExtensible`
+  * `handler.preventExtensions(target)` - a trap for `Object.preventExtensions`
+  * `handler.getOwnPropertyDescriptor(target, prop)` - a trap for `Object.getOwnPropertyDescriptor`
+  * `handler.defineProperty(target, property, descriptor)` - a trap for `Object.defineProperty`
+  * `handler.has(target, prop)` - a trap for the `in` operator
+  * `handler.get(target, property, receiver)` - a trap for getting property values
+  * `handler.set(target, property, value, receiver)` - a trap for setting property values
+  * `handler.deleteProperty(target, property)` - a trap for the `delete` operator
+  * `handler.ownKeys(target)` - a trap for `Object.getOwnPropertyNames` and `Object.getOwnPropertySymbols`
+  * `handler.apply(target, thisArg, argumentsList)` - a trap for a function call
+  * `handler.construct(target, argumentsList, newTarget)` - a trap for the `new` operator
 
 ### Object
 * Methods
@@ -727,4 +727,75 @@ shared properties from its prototype.
 **Classes**
 JS's prototype system can be interpreted as a somewhat informal take on an object-oriented concept
 called *classes*. A class defines the shape of a type of object--what methods and properties it
-has
+has. Such an object is called an *instance* of the class. 
+
+Prototypes are useful for defining properties for which all instances of a class share the same value, such as methods. 
+Properties that differ per instance, such as our ferret `type` property, need to be stored directly in the objects 
+themselves.
+
+So to create an instance of a given class, you have to make an object that derives from the proper prototype, but you
+also have to make sure it, itself, has the properties that instances of this class are supposed to have. This is what a
+*constructor* function does.
+```js
+function makeFerret(type) {
+  let ferret = Object.create(protoFerret); //proto define above
+  ferret.type = type;
+  return ferret;
+}
+```
+JS provides a way to make defining this type of function easier. If you put the keyword `new` in front of a function call,
+the function is treated as a constructor. This means that an object with the right prototype is automatically created,
+bound `this` in the function, and returned at the end of the function. The prototype object used when constructing objects
+is found by taking the `prototype` property of the constructor function.
+```js
+function Ferret(type) {
+  this.type = type;
+}
+Ferret.prototype.speak = function(line) {
+  console.log(`${this.type} says line`);
+}
+let weirdFerret = new Ferret('weirddd');
+```
+Constructors (all functions, in fact) automatically get a property named `prototype`, which by default holds a plain,
+empty object that derives from `Object.prototype`. You can overwrite it with a new object if you want. Or you can add
+properties to the existing object, as the example does.
+
+By convention, the names of constructors are capitalized so that they can easily be distinguished from other functions.
+
+It is important to understand the distinction between the way a prototype is associated with a constructor (through its
+`prototype` property) and the way objects have a prototype (which can be found with `Object.getPrototypeOf`). The actual
+prototype of a constructor is `Function.prototype` since constructors are functions. Its `prototype` property holds the
+prototype used for instances created through it.
+
+**Getters, Setters, and Statics**
+Interfaces often consist mostly of methods, but it is also ok to include properties that hold non function values. It is
+not even necessary for such an object to compute and store such a property directly in the instance. Even properties that
+are accessed directly may hide a method call. Such methods are called *getters*, and they are defined by writing `get` in
+front of the method name in an object expression or class declaration.
+```javascript
+let varyingSize = {
+  get size() {
+    return Math.floor(Math.random() * 100);
+  }
+}
+```
+Whenever someone reads from this object's `size` property, the associated method is called. You can do a similar thing
+when a property is written to, using a *setter*.
+
+Sometimes you want to attach some properties directly to your constructor function, rather than to the prototype. Such
+methods won't have access to a class instance but can, for example, be used to provide additional ways to create instances.
+Inside a class declaration, methods that have `static` written before their name are stored on the constructor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

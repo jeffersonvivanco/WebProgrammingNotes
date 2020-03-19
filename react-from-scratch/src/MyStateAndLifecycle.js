@@ -84,7 +84,7 @@ export class Clock extends Component {
 
 class MyStateAndLifecycle extends Component {
   render() {
-    return <Clock/>
+    return <Clock/>;
   }
 }
 

@@ -63,5 +63,9 @@ Luckily, we can handle these issues with **Babel** and **Webpack**.
     - when you run your app now changes to the code should update the client immediately.
     
 ### Last details
-You might notice something interesting about starting your project. Built files never show up
+You might notice something interesting about starting your project. Built files never show up in your `dist` folder. See,
+`webpack-dev-server` is actually serving the bundled files from memory--once the server stops, they're gone. To actually
+build your files, we're going to utilize `webpack` proper--add a script called `build` in your `package.json` with the
+following command: `webpack --mode development`. You can replace `development` with `production`, but if you completely
+omit `--mode`, it will fall back to the latter and give you a warning.
 
