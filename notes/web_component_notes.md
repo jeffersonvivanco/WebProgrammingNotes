@@ -42,3 +42,6 @@ WebGL or WebRTC. As long as there is a common interface the consumer can plug th
 ### Writing web components
 When building these components we didn't jump right into making components. First we produced working prototypes of features
 we wanted and got them working together. We then isolated individual pieces of functionality and wrapped them in components.
+
+## Web Component Management
+

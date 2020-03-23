@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Component Experiment</title>
+</head>
+<body>
+<my-person name="Jefferson" age="12"></my-person>
+<script>
+    class Person extends HTMLElement {
+      static get observedAttributes() {
+        return ['name'];
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        console.log(this.attributes);
+        console.log(this.attributes.getNamedItem('name'));
+        console.log(this.attributes.getNamedItem('color'));
+      }
+    }
+    customElements.define('my-person', Person);
+</script>
+</body>
+</html>
