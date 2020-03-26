@@ -68,8 +68,8 @@ module.exports = {
   make sure we set hotOnly to true in devServer.
    */
   plugins: [new webpack.HotModuleReplacementPlugin()],
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  }
+  // externals: {
+  //   'react': 'React',
+  //   'react-dom': 'ReactDOM'
+  // }
 };

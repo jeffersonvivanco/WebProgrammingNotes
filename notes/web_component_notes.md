@@ -1,4 +1,5 @@
 # Some notes on web components
+These notes I took while reading documentation or blogs. I did not write these.
 
 ## Making apps with web components
 
@@ -45,3 +46,51 @@ we wanted and got them working together. We then isolated individual pieces of f
 
 ## Web Component Management
 
+### What is a good way to include styles and templates, and deploying web components?
+* One way is to use `<link rel="import">` that is only supported by Chrome but allows you to bundle CSS, `<template>`s
+  and other assets needed for element.
+* Another way is to have a single JS file `<script src="my-webcomponent.js"></script>` that you include in your page that
+  defines and registers the custom element. The script file encapsulates the element logic, definition, and styling.
+  * By including your component, the consumer of the custom element should not have uncontrolled blocking requests emanating
+    from your element. If something has blocked the render, then the consumer has decided to do it. This means that there
+    is not external style sheets or JS.
+* Some more questions
+  * What is a good way to deploy web components?
+  * Is there a model for encapsulating and loading templates and styles?
+  * Is it a good idea not to make any resource calls from the component?
+   
+   
+   
+## 4 reasons you should use native Web Components
+1. Code is not for computers
+   * Developers need to place more emphasis on writing cleaner, more semantic markup for several reasons: better performance,
+     increased accessibility, and easier maintainability.
+   * Native Web Components provide a lot of benefits:
+     * Declaration: you can easily declare components on your page that are ready to go
+     * Composability: you can compose apps using smaller chunks of code, with the Shadow DOM.
+     * Reusability: you can import, use, and reuse elements in applications.
+     * Maintainability: compartmentalized, reusable code is the best way to maintain code readability; it reduces overall
+       app size, and simplifies debugging.
+     * Extensibility: browser elements or custom web components can be extended with the custom elements API.
+     * Scoping: Shadow DOM provides DOM and CSS scoping where styles don't leak out and component DOM is all local. you
+       define the element API inside your component and it doesn't leak into the global scope.
+     * Interoperability: native web components are interoperable at the browser's lowest level which is DOM.
+     * Productivity: using already built components and iterating on top of them lets us develop faster and more productive.
+     * Accessibility: by using and extending existing browser elements, the default browser accessibility comes with it.
+2. Brand Consistency
+   
+   Having your frontend app code split up into component libraries or even design systems can ensure brand consistency
+   through the company. It also provides an additional benefit of the ability to be used by all teams, regardless of tech
+   stack.
+3. Business Perspective
+
+   If you're a development manager or executive, native web components save you money. Developers will have the ability
+   to focus solely on making native reusable components, similar to legos, and use these blocks in other applications
+   across teams. Your teams will be able to build and deploy applications much more quickly. This leads to less time
+   devoted to developing new features.
+4. Developer Experience
+
+   From a developer's perspective, native web components help to manage the project more efficiently. The code will be
+   more consumable. Code can be shared between teams more easily. And as a by-product, code quality will be improved,
+   as developers can re-use existing components. Finally, apps that are using native web components reap the benefits,
+   when you add a fix or add a new feature, these changes get propagated down to each instance.

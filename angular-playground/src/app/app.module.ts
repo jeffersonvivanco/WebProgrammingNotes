@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {ApplicationRef, DoBootstrap, Injector, NgModule} from '@angular/core';
+import {ApplicationRef, CUSTOM_ELEMENTS_SCHEMA, DoBootstrap, Injector, NgModule} from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,7 +17,8 @@ import {createCustomElement} from '@angular/elements';
     AppRoutingModule
   ],
   providers: [BasicFormService],
-  // bootstrap: [AppComponent]
+  // bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {}

@@ -43,7 +43,7 @@ class MyHandlingEvents extends Component {
     super();
     this.state = {
       count: 0
-    }
+    };
     // this binding is necessary to make "this" work in the callback
     this.handleClick = this.handleClick.bind(this);
   }

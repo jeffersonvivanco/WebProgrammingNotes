@@ -16,7 +16,7 @@ class MyComponent extends HTMLElement {
     this.appendChild(div);
   }
   render() {
-    ReactDom.render(<MyForms greeting={this.greeting} />, this.children[0]);
+    ReactDom.render(<MyForms greeting={this._greeting} />, this.children[0]);
     this.testEvent()
   }
   set greeting(val) {
@@ -46,6 +46,6 @@ class MyClock extends HTMLElement {
   }
 
 }
-customElements.define('my-component', MyComponent);
-customElements.define('my-clock', MyClock);
-// ReactDom.render(<App />, document.getElementById('root'));
+// customElements.define('my-component', MyComponent);
+// customElements.define('my-clock', MyClock);
+ReactDom.render(<App />, document.getElementById('root'));

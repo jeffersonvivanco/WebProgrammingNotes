@@ -7,6 +7,7 @@ import MyComponentsAndProps from "./MyComponentsAndProps";
 import MyStateAndLifecycle from "./MyStateAndLifecycle";
 import MyHandlingEvents from "./MyHandlingEvents";
 import MyForms from "./MyForms";
+import MyRefsAndDom from "./MyRefsAndDom";
 
 class App extends Component {
   render() {
@@ -18,6 +19,7 @@ class App extends Component {
         <MyStateAndLifecycle/>
         <MyHandlingEvents/>
         <MyForms greeting={'good night'}/>
+        <MyRefsAndDom />
       </section>
     )
   }
