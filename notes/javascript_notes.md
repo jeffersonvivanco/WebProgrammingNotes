@@ -786,6 +786,98 @@ Sometimes you want to attach some properties directly to your constructor functi
 methods won't have access to a class instance but can, for example, be used to provide additional ways to create instances.
 Inside a class declaration, methods that have `static` written before their name are stored on the constructor.
 
+### Bugs and Errors
+
+**Exceptions**
+
+The `throw` keyword is used to raise an exception. Catching one is done by wrapping a piece of code in a `try` block, 
+followed by the keyword `catch`. Ex:
+```javascript
+function test() {
+  throw new Error('test error!');
+}
+try {
+  const e = 'Hello World';
+  const f = test();
+} catch (e) {
+  console.log('something went wrong', e);
+}
+```
+The `Error` constructor is a standard JS constructor that creates an object with a `message` property. In most JS 
+environments instances of this constructor also gather information about the call stack that existed when the exception
+was created, a so-called *stack trace*. This information is stored in the `stack` property and can be helpful when trying
+to debug a problem: it tells us the function where the problem occurred and which functions made the failing call.
+
+**Cleaning up after exceptions**
+
+The effect of an exception is another kind of control flow. Every action that might cause an exception, which is pretty
+much every function call and property access, might cause control to suddenly leave your code. This means when code has
+several side effects, even if its "regular" control flow looks like they'll always all happen, an exception might prevent
+some of them from taking place. Even functions that don't look like they will throw an exception might do so in exceptional
+circumstances or when they contain a programmer mistake.
+
+One way to addess this is to use fewer side effects. Again, a programming style that computes new values instead of
+changing existing data helps. If a piece of code stops running in the middle of creating a new value, no one ever sees
+the half-finished value, and there is no problem.
+
+But that isn't always practical. So there's another feature that `try` statements have. They may be followed by a `finally`
+block either instead of or in addition to a `catch` block. Ex:
+```javascript
+try {
+  // something
+} catch (error) {
+  // something
+} finally {
+  // something
+}
+```
+Note that even though the `finally` code is run when an exception is thrown in the `try` block, it does not interfere
+with the exception. After the `finally` block runs, the stack continues unwinding.
+
+Written programs that operate reliably even when exceptions pop up in unexpected places is hard. Many people simply don't
+bother, and because exceptions are typically reserved for exceptional circumstances, the problem may occur so rarely that
+it is never even noticed. Whether that is a good thing or a really bad thing depends on how much damage the software will
+do when it fails.
+
+**Selective catching**
+
+When an exception makes it all the way to the bottom of the stack without being caught, it gets handled by the environment.
+What this means differs between environments. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

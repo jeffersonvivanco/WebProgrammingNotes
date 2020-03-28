@@ -54,7 +54,6 @@ the `angular.json` in 3 places as follows:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.2.10/custom-elements-es5-adapter.js"></script>
 <script type="text/javascript" src="http://localhost:8081/main.js"></script>
 <script type="text/javascript" src="http://localhost:8082/main.js"></script>
-</body>
 ```
 
 ## Angular Animations
