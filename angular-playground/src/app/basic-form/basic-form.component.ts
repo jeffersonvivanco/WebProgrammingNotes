@@ -34,10 +34,7 @@ export class BasicFormComponent implements OnInit {
   ngOnInit(): void {}
   private isStringDataOk(data) {
     const d = data.trim();
-    if (d.length === 0 || d === 'null' || d === 'undefined') {
-      return false;
-    }
-    return true;
+    return !(d.length === 0 || d === 'null' || d === 'undefined');
   }
   sayHi() {
     console.log('sayHiEvent emitting message');

@@ -842,8 +842,17 @@ do when it fails.
 **Selective catching**
 
 When an exception makes it all the way to the bottom of the stack without being caught, it gets handled by the environment.
-What this means differs between environments. 
+What this means differs between environments. In browsers, a description of the error typically gets written to the JS
+console. Node.js, the browserless JS environment is more careful about data corruption. It aborts the whole process when
+an unhandled exception occurs.
 
+For programmer mistakes, just letting the error go through is often the best you can do. An unhandled exception is a
+reasonable way to signal a broken program, and the JS console will, on modern browsers, provide you with some information
+about which function calls were on the stack when the problem occurred.
+
+*For problems that are expected to happen during routine use, crashing with an unhandled exception is a terribly strategy.*
+
+### Regular Expressions
 
 
 

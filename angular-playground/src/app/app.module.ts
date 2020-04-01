@@ -7,6 +7,8 @@ import { BasicFormComponent } from './basic-form/basic-form.component';
 import {BasicFormService} from './basic-form/basic-form.service';
 import {createCustomElement} from '@angular/elements';
 
+declare const APPLICATION;
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,7 +25,11 @@ import {createCustomElement} from '@angular/elements';
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {}
   ngDoBootstrap(appRef: ApplicationRef): void {
-    const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
-    customElements.define('basic-form', basicFormElement);
+    if (typeof APPLICATION !== 'undefined' && APPLICATION === 'micro') {
+      const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
+      customElements.define('basic-form', basicFormElement);
+    } else {
+      appRef.bootstrap(AppComponent);
+    }
   }
 }

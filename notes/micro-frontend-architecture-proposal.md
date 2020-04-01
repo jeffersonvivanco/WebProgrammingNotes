@@ -1,4 +1,4 @@
-# Micro Frontend Architecture Proposal
+# Micro Frontend Architecture
 
 ## Ecosystem
 
@@ -15,9 +15,9 @@
 
 ### Micro Frontend App
 * app is build as a single js bundle
-* app defines web components for containers to load
+* js bundle defines web components for containers to use
 * app documents dependencies so the app container knows and loads
-  the dependencies
+  those dependencies
   * note: **APP DOES NOT LOAD OTHER WEB COMPONENTS**
 ![microfrontent ecosystem](./assets/microfrontend-ecosystem.jpg)
 
@@ -51,15 +51,21 @@ your web components.
 
 
 **Steps**
-1. Add component/components that you wish to create custom element to `entryComponents` list in `AppModule`
-2. Remove `AppComponent` from `bootstrap` list in `AppModule`
+1. Add component(s) that you wish to create custom element to `entryComponents` list in `AppModule`
+2. Remove `AppComponent` from `bootstrap` list in `AppModule` and add it to `entryComponents`
 3. Add the following to `AppModule` class
-```ts
+```typescript
+declare const APPLICATION;
+//...
 export class AppModule {
     constructor(private injector: Injector) {}  
-    ngDoBootstrap() {
-        const myCustomElement = createCustomElement(BookingComponent, { injector: this.injector });
-        customElements.define('app-flight-booking', myCustomElement);
+    ngDoBootstrap(appRef: ApplicationRef): void {
+        if (typeof APPLICATION !== 'undefined' && APPLICATION === 'micro') {
+            const myCustomElement = createCustomElement(BookingComponent, { injector: this.injector });
+            customElements.define('app-flight-booking', myCustomElement);
+        } else {
+            appRef.bootstrap(AppComponent);
+        }
   }
 }
 ```
@@ -72,26 +78,125 @@ the `angular.json` in 3 places as follows:
     "test": { "builder": "ngx-build-plus:karma"}
 }
 ```
-5. Run the following command to build the project into a single JS file.
-`ng build --prod --output-hashing none --single-bundle true`
+5. Add a js file called `extra_webpack_config.js`. Here we will set the constant
+   `APPLICATION` so we can tell angular whether to bootstrap the entire app or just our
+   web component.
+```javascript
+const webpack = require('webpack');
+module.exports = {
+  plugins: [
+    new webpack.DefinePlugin({
+      'APPLICATION': 'micro'
+    })
+  ]
+}
+```
+6. Run the following command to build the project into a single JS file.
+`ng build --prod --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js`
   1. `--output-hashing none` - will avoid hashing the file names
   2. `--single-bundle true` - will bundle all compiled files into a single JS file 
-6. Add dependencies and build files to another the app container to load the web component
+7. Add dependencies and build files to the app container to load the web component
 ```html 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.9.1/zone.min.js"></script>
 <script type="text/javascript" src="http://localhost:8082/app.js"></script>
 ```
-7. Note: If using JS es5, you will need this polyfill `custom-elements-es5-adapter.js` from webcomponents library
+8. Note: If using JS es5, you will need this polyfill `custom-elements-es5-adapter.js` from `webcomponents` library
 
-### Adding Angular Web Component to App Container
+### Adding Angular Web Component to Angular App Container
 
 **Steps**
+1. As noted above add below scripts to the app container to load the web component
+   ```html 
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.9.1/zone.min.js"></script>
+   <script type="text/javascript" src="http://localhost:8082/app.js"></script>
+   ```
+   * Note: You can also load these bundles dynamically using `requirejs`. However, you can only use the web component once
+     the bundle has loaded. This is not a problem with `<script>` since it loads the resources before your angular app when
+     not using `defer`. You can use the `customElements.whenDefined()` promise to know exactly when your web component has
+     been defined.
+     * Also with `requireJs`, you can use the polyfills that you include with angular since by the time you start loading
+       the web components, the angular ecosystem would have already been loaded.
+2. In `AppModule`, add `CUSTOM_ELEMENTS_SCHEMA` to `schemas` list in module metadata
+3. If using es5 add this polyfill `custom-elements-es5-adapter.js`
+4. Route all backend calls to proper web component backend
+5. Add web component to app
+   * Let's say you've defined a web component with the name `account-info`,
+     with attributes `client-data` and it dispatches an event of type `changedAccount`,
+     you can use it in an angular app like this:
+   ```html
+   <account-info [clientData]="dataVal" (changedAccount)="handleEvent($event)"></account-info>
+   ```
+
+### Adding Angular Web Component to React App Container
 1. As noted above add below scripts to app container to load web component
    ```html 
    <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.9.1/zone.min.js"></script>
    <script type="text/javascript" src="http://localhost:8082/app.js"></script>
    ```
-   * Note: You can also load these bundles dynamically using `requirejs`
-   
-2. In `AppModule`, add `CUSTOM_ELEMENTS_SCHEMA` to `schemas` list in module metadata
+   * Note: You can also load these bundles dynamically using `requirejs`. However, you can only use the web component once
+     the bundle has loaded. This is not a problem with `<script>` since it loads the resources before your angular app when
+     not using `defer`. You can use the `customElements.whenDefined()` promise to know exactly when your web component has
+     been defined.
+     * Also with `requireJs`, you can use the polyfills that you include with react since by the time you start loading
+       the web components, the react ecosystem would have already been loaded.
+   * Also, you have to set base href in `index.html` like `<base href="/">`, required by angular
+2. Add web component's custom element html tag to intrinsic elements. Add types to `compileOptions.typeRoots` in `tsconfig.json`
 
+   Create a file `webcomponent_typings.ts` and add the following namespace
+   ```typescript
+   declare namespace JSX {
+     interface IntrinsicElements {
+       [elementName: string]: any // including all elements
+     }
+   }
+   ```
+   Add it to `compilerOptions.typeRoots` in `tsconfig.json`, ex: `typeRoots: [["./src/webcomponent_typings.ts", "./node_modules/@types"]`
+3. If using es5 add this polyfill `custom-elements-es5-adapter.js`
+4. Route all backend calls to proper web component backend
+5. Add web component to app
+   * I recommend creating a wrapper for the web component to make it easier to interact
+     with and to add a listener to events when the component gets created and to
+     remove the listener when the component gets destroyed as shown below.
+   * Let's say you've defined a web component with the name `account-info`,
+     with attributes `client-data` and it dispatches an event of type `changedAccount`,
+     you can create a wrapper like this
+     ```typescript jsx
+     class AccountInfoWrapper extends React.Component<any, any> {
+        changedAccountListener: any;
+        accountInfoRef: any;
+        constructor(props: any) {
+           super(props);
+           this.accountInfoRef = React.createRef();
+        }
+        processEvent(evt:any) {
+           evt.preventDefault();
+           console.log('processing event in account-info', evt);
+        }
+        componentDidMount(): void {
+           this.changedAccountListener = this.accountInfoRef.current.addEventListener('changedAccount', this.processEvent);
+        }
+        componentWillUnmount(): void {
+           if (this.changedAccountListener) {
+               this.accountInfoRef.current.removeListener('changedAccount', this.processEvent);
+           }
+        }
+        render() {
+           return (
+               <div>
+                 <account-info ref={this.accountInfoRef} client-data={JSON.stringify(this.props.data)} />
+               </div>
+           )
+       }
+     }
+     export default AccountInfoWrapper;
+     ```
+     Note:
+     * Unlike the angular container, react treats attributes by their name not their
+       camelCase alternative. Also as of React 16, when you pass data as an object to an HTML element via an attribute,
+       react jsx converts it to a string. However, the object must implement the `toString()` or else it will pass it as
+       `[object Object]` which is why we use `JSON.stringify`.
+     * This also means that if you create an angular web component and you expect it to be used by React applications, you
+       must accept data as a string and then parse it back to the object
+     * I think this will no longer be an issue in react 17.
+     * Unlike the angular container, you have to use the native `addEventListener` function to listen to events from the
+       component.
