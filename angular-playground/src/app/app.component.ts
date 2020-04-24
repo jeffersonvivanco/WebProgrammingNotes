@@ -10,5 +10,5 @@ export class AppComponent implements OnInit {
   initData = {
     name: 'Jeff'
   };
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 }

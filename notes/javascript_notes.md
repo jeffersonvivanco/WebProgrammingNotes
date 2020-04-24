@@ -179,7 +179,7 @@ for (const [key, value] of objectEntries(jane)){
   ```
   * The operand of `yield*` does not have to be a generator object, it can be any iterable.
   * `yield*` considers end-of-iteration values
-
+  
 ## Custom Event
 * Properties
   * `CustomEvent.detail` - Any data passed when initializing the event.
