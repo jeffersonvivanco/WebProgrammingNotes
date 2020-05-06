@@ -30,8 +30,15 @@ export class BasicFormComponent implements OnInit {
     }
   }
   @Output() sayHiEvent = new EventEmitter<any>();
-  constructor() { }
+  constructor() {}
   ngOnInit(): void {}
+  @Input()
+  get actions() {
+    return {
+      save: this.save,
+      cancel: this.cancel
+    };
+  }
   private isStringDataOk(data) {
     const d = data.trim();
     return !(d.length === 0 || d === 'null' || d === 'undefined');
@@ -40,5 +47,10 @@ export class BasicFormComponent implements OnInit {
     console.log('sayHiEvent emitting message');
     this.sayHiEvent.emit({message: 'HI!!!'});
   }
-
+  save() {
+    console.log('saving ...');
+  }
+  cancel() {
+    console.log('cancelling ...');
+  }
 }

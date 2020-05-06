@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const PORT = 3001;
+const path = require('path');
 
 app.use(cors());
-app.use(express.static('dist/angular-playground'));
+app.use(express.static(path.join(__dirname, 'dist/angular-playground')));
 
 app.listen(PORT, () => console.log(`app (serving angular component) listening of port ${PORT}`));

@@ -3,7 +3,7 @@ const webpack = require('webpack');
 module.exports = {
   plugins: [
     new webpack.DefinePlugin({
-      'APPLICATION': 'micro'
+      APPLICATION: 'micro'
     })
   ]
 };

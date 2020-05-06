@@ -5,6 +5,7 @@
     <title>Web Components Container</title>
     <base href="/">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.9.1/zone.min.js"></script>
+    <script src="http://localhost:3001/polyfills-es2015.js"></script>
     <script src="http://localhost:3001/main-es2015.js"></script>
     <style>
         .container {
@@ -17,8 +18,10 @@
 <section class="container">
     <basic-form id="basicForm"></basic-form>
     <script>
-        document.getElementById('basicForm').initData = {name: 'Jefferson'};
-        document.getElementById('basicForm').addEventListener('sayHiEvent', (evt) => console.log('event fired from component', evt));
+        const basicForm = document.getElementById('basicForm');
+        basicForm.initData = {name: 'Jefferson'};
+        basicForm.addEventListener('sayHiEvent', (evt) => console.log('event fired from component', evt));
+        console.dir(basicForm);
     </script>
 </section>
 </body>

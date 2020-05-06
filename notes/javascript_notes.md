@@ -1,5 +1,5 @@
 # My Javascript Notes
-by Jefferson Vivancp
+by Jefferson Vivanco
 
 ## Chrome Console
 
@@ -113,19 +113,6 @@ const obj = {
 }
 ```
 
-### Classes
-ES6 classes are mostly just more convenient syntax for constructor functions
-```js
-class Person {
-    constructor(name){
-        this.name = name;
-    }
-    describe(){
-        // ...
-    }
-}
-```
-
 ### Subclasses of error
 ```js
 class MyError extends Error {
@@ -142,8 +129,43 @@ function* getFunc(){
     console.log('B');
 }
 ```
-* `yield` is an operator with which a generator can pause itself. Additionally, generators can also recieve input and send output via
+* `yield` is an operator with which a generator can pause itself. Additionally, generators can also receive input and send output via
 `yield`.
+* When you call a generator function `getFunc()`, you get a *generator object* `genObj` that you can use to control the
+  process: `const genObj = getFunc()`.  The process is initially paused in line A. `genObj.next()` resumes execution, a
+  `yeild` inside `getFunc()` pauses execution.
+
+#### Kinds of generators
+There are 4 kinds of generators:
+1. Generator function declarations:
+   ```js
+   function* genFunc() { /* ... */}
+   const getObj = genFunc();
+   ```
+2. Generator function expressions:
+   ```js
+   const genFunc = function* () {/*...*/}
+   const genObj = genFunc();
+   ```
+3. Generator method definitions in object literals:
+   ```js
+   const obj = {
+     * generatorMethod() {/*...*/}
+   }
+   const genObj = obj.generatorMethod();
+   ```
+4. Generator method definitions in class definitions (class declarations of class expressions)
+   ```js
+   class MyClass {
+     * generatorMethod() {/*...*/}
+   }
+   const myInst = new MyClass();
+   const genObj = myInst.generatorMethod();
+   ```
+   
+#### Use cases
+
+##### Implementing iterables
 * Ways of iterating over a generator
   * `for-of` loop
   * the spread operator
@@ -180,6 +202,8 @@ for (const [key, value] of objectEntries(jane)){
   * The operand of `yield*` does not have to be a generator object, it can be any iterable.
   * `yield*` considers end-of-iteration values
   
+#### Use cases
+
 ## Custom Event
 * Properties
   * `CustomEvent.detail` - Any data passed when initializing the event.
@@ -626,11 +650,12 @@ assignment, enumeration, function invocations, etc.). ===> Look at `programming_
   * `Object.create()` - creates a new object with the specified prototype object and properties
   * `Object.getOwnPropertyDescriptor()` - returns a property descriptor for a named property on an object
   * `Object.getPrototypeOf()` - returns the `prototype` of the specified object
+  
 
 ## Eloquent Javascript
 
 ### The secret life of Objects
-**Encapsulation**
+#### Encapsulation
 The core idea in object-oriented programming is to divide programs into smaller pieces and make each
 piece responsible for managing its own state. This way, some knowledge about the way a piece of the
 program works can be kept *local* to that piece. Someone working on the rest of the program does not
@@ -651,7 +676,7 @@ those properties are private.
 
 Seperating interface from implementation is a great idea. It is usually called *encapsulation*.
 
-**Methods**
+#### Methods
 Methods are nothing more than properties that hold function values. Ex:
 ```js
 let ferret = {};
@@ -690,7 +715,7 @@ normalize.call({coords: [0, 2, 3], length: 5});
 ```
 If I had written the argument to `map` using the `function` keyword, the code wouldn't work.
 
-**Prototypes**
+#### Prototypes
 In addition to their set properties, most objects also have also have a *prototype*. A prototype is
 another object that is used as a fallback source of properties. When an object gets a request for a
 property that it doesn't have, its prototype will be searched for the property, then the prototype's
@@ -724,7 +749,7 @@ a container for the properties that are shared by all ferrets. An individual fer
 the funFerret, contains only properties that apply only to itself--in this case--its type--and derives
 shared properties from its prototype.
 
-**Classes**
+#### Classes
 JS's prototype system can be interpreted as a somewhat informal take on an object-oriented concept
 called *classes*. A class defines the shape of a type of object--what methods and properties it
 has. Such an object is called an *instance* of the class. 
@@ -767,7 +792,26 @@ It is important to understand the distinction between the way a prototype is ass
 prototype of a constructor is `Function.prototype` since constructors are functions. Its `prototype` property holds the
 prototype used for instances created through it.
 
-**Getters, Setters, and Statics**
+#### Class Notation
+So JS classes are constructor functions with a prototype property. ES6 classes are mostly just more convenient 
+syntax for constructor functions:
+```js
+class Person {
+    constructor(name){
+        this.name = name;
+    }
+    describe(){
+        // ...
+    }
+}
+```
+Like `function`, `class` can be used both in statements and in expressions. When used as an expression, it doesn't define
+a binding but just produces the constructor as a value. You are allowed to omit the class name in a class expression.
+```js
+let object = new class { getWord() { return "hello"; }};
+```
+
+#### Getters, Setters, and Statics
 Interfaces often consist mostly of methods, but it is also ok to include properties that hold non function values. It is
 not even necessary for such an object to compute and store such a property directly in the instance. Even properties that
 are accessed directly may hide a method call. Such methods are called *getters*, and they are defined by writing `get` in
@@ -851,9 +895,6 @@ reasonable way to signal a broken program, and the JS console will, on modern br
 about which function calls were on the stack when the problem occurred.
 
 *For problems that are expected to happen during routine use, crashing with an unhandled exception is a terribly strategy.*
-
-### Regular Expressions
-
 
 
 

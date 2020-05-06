@@ -25,11 +25,13 @@ declare const APPLICATION;
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {}
   ngDoBootstrap(appRef: ApplicationRef): void {
-    if (typeof APPLICATION !== 'undefined' && APPLICATION === 'micro') {
-      const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
-      customElements.define('basic-form', basicFormElement);
-    } else {
-      appRef.bootstrap(AppComponent);
-    }
+    // if (typeof APPLICATION !== 'undefined' && APPLICATION === 'micro') {
+    //   const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
+    //   customElements.define('basic-form', basicFormElement);
+    // } else {
+    //   appRef.bootstrap(AppComponent);
+    // }
+    const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
+    customElements.define('basic-form', basicFormElement);
   }
 }

@@ -1,8 +1,28 @@
 # Angular Notes
 
-## Template Syntax
-| Type | Syntax | Category
-| --- | --- | --- |
+## Angular Concepts
+The architecture of an Angular application relies on certain fundamental concepts. The basic building
+blocks are *NgModules*, which provide compilation context for *components*. NgModules collect related
+code into functional sets, an Angular app is defined by a set of NgModules. An app always has at least
+a *root module* that enables bootstrapping, and typically has many more *feature modules*.
+
+* Components define *views*, which are sets of screen elements that Angular can choose among and modify
+  according to your program logic and data.
+* Components use *services*, which provide specific functionality not directly related to views. Service
+  providers can be *injected* into components as *dependencies*, making your code modular, reusable, and
+  efficient.
+  
+Both components and services are simply classes, with *decorators* that mark their type and provide metadata
+that tells Angular how to use them.
+
+## Components & Templates
+
+### Displaying Data
+
+* Choosing the template source
+  * By default, the angular CLI command ng g c generates components with a template file. You can override that by
+    adding the `-t` option
+
 
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.

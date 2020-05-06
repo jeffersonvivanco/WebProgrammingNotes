@@ -5,7 +5,12 @@
     <title>Web Component Experiment</title>
 </head>
 <body>
-<my-person name="Jefferson" age="12"></my-person>
+<my-person name="Jefferson" age="12" id="myPerson">
+    <h1 slot="name">Jefferson</h1>
+</my-person>
+<template id="my-person-template">
+    <slot name="name">Name</slot>
+</template>
 <script>
     class Person extends HTMLElement {
       static get observedAttributes() {
@@ -14,10 +19,14 @@
       constructor() {
         super();
       }
+      get actions() {
+        return ['name', 'age', 'info']
+      }
       connectedCallback() {
-        console.log(this.attributes);
-        console.log(this.attributes.getNamedItem('name'));
-        console.log(this.attributes.getNamedItem('color'));
+        const template = document.getElementById('my-person-template');
+        const templateContent = template.content;
+        const shadowRoot = this.attachShadow({mode: 'open'});
+        shadowRoot.appendChild(templateContent.cloneNode(true));
       }
     }
     customElements.define('my-person', Person);

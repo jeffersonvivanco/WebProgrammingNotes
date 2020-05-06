@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:micro:dev": "ng build --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o",
     "build:micro": "ng build --prod --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o",
     "test": "ng test",
     "lint": "ng lint",
@@ -45,7 +46,7 @@
     "karma-jasmine": "^3.1.1",
     "karma-jasmine-html-reporter": "^1.5.3",
     "protractor": "^5.4.4",
-    "ts-node": "^8.9.1",
+    "ts-node": "^8.10.1",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
   }
