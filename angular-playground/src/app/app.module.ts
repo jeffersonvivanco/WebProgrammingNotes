@@ -31,7 +31,8 @@ export class AppModule implements DoBootstrap {
     // } else {
     //   appRef.bootstrap(AppComponent);
     // }
-    const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
-    customElements.define('basic-form', basicFormElement);
+    // const basicFormElement = createCustomElement(BasicFormComponent, {injector: this.injector});
+    // customElements.define('basic-form', basicFormElement);
+    appRef.bootstrap(AppComponent);
   }
 }

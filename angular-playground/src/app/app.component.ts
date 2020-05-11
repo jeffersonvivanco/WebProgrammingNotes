@@ -10,5 +10,6 @@ export class AppComponent implements OnInit {
   initData = {
     name: 'Jeff'
   };
+  message: string;
   ngOnInit(): void {}
 }

@@ -9,6 +9,7 @@ export class BasicFormComponent implements OnInit {
   info: {
     name: string
   };
+  @Input() message: string;
   @Input()
   set initData(data) {
     console.log('data passed to basic form', data);
@@ -29,7 +30,7 @@ export class BasicFormComponent implements OnInit {
       console.error('initData must either be a string or an object', data);
     }
   }
-  @Output() sayHiEvent = new EventEmitter<any>();
+  @Output() messageChange = new EventEmitter<string>();
   constructor() {}
   ngOnInit(): void {}
   @Input()
@@ -45,7 +46,8 @@ export class BasicFormComponent implements OnInit {
   }
   sayHi() {
     console.log('sayHiEvent emitting message');
-    this.sayHiEvent.emit({message: 'HI!!!'});
+    this.message = 'Hello from sayHi';
+    this.messageChange.emit(this.message);
   }
   save() {
     console.log('saving ...');

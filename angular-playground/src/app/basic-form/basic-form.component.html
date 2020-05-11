@@ -4,8 +4,9 @@
     <p>This is a basic form component</p>
     <h2>Info</h2>
     <p>Name: {{info?.name}}</p>
+    <p>Message: {{message && '...'}}</p>
   </section>
   <footer>
-    <button (click)="sayHi()">Say Hi</button>
+    <button (click)="sayHi();save()">Say Hi</button>
   </footer>
 </section>

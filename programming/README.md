@@ -50,6 +50,7 @@ This is a demonstration for educational purposes
 This is another line.
 
 Table
+
 name | age 
 --- | --- 
 Jeff | 23 

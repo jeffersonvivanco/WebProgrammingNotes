@@ -5,5 +5,10 @@ module.exports = {
     new webpack.DefinePlugin({
       APPLICATION: 'micro'
     })
-  ]
+  ],
+  output: {
+    filename: (chunkData) => {
+      return chunkData.chunk.name === 'main' ? 'angular-playground.js' : '[name].js';
+    }
+  }
 };
