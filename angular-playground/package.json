@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:micro:dev": "ng build --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o",
-    "build:micro": "ng build --prod --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o",
+    "build:micro:dev": "ng build --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o && node rename-files.js",
+    "build:micro": "ng build --prod --output-hashing none --single-bundle true --extra-webpack-config extra_webpack_config.js -o && node rename-files.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

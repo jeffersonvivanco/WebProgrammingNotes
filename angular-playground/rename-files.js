@@ -1,11 +1,16 @@
 const fs = require('fs');
 const pathToFile = 'dist/angular-playground';
+
 const filesToRename = ['main-es5.js', 'main-es2015.js'];
+const appName = 'angular-playground';
 
-
-
-for (let f in filesToRename) {
-  fs.rename(`${pathToFile}/f`, 'dist/angular-playground/angular-playground.js', (data) => {
-    console.log('renamed', data);
-  });
+for (const f of filesToRename) {
+  const newName = f.replace('main', appName);
+  fs.renameSync(`${pathToFile}/${f}`, `${pathToFile}/${newName}`);
+  console.log(`${f} ==> ${newName}`);
+  // check if there is a .map file
+  if (fs.existsSync(`${pathToFile}/${f}.map`)) {
+    fs.renameSync(`${pathToFile}/${f}.map`, `${pathToFile}/${newName}.map`);
+    console.log(`${f}.map ==> ${newName}.map`);
+  }
 }
