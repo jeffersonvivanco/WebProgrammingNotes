@@ -328,3 +328,94 @@ The internal Architect tool delegates work to handler functions called *builders
 ## Deployment
 
 ### Deferential Loading
+
+## NgZone
+A zone is an execution context that persists across async tasks. You can think of it as thread-local storage for JS VMs.
+
+### Fundamentals of change detection
+#### When apps update HTML
+Angular runs change detection when it detects that data could have changed. The result of change detection is that the
+DOM is updated with new data. Angular detects the changes in different ways. For component initialization, Angular calls
+change detection explicitly. For asynchronous operations, Angular uses a zone to detect changes in places where the data
+could have possibly mutated and it runs change detection automatically.
+
+### Zone and execution contexts
+A zone provides an execution context that persists across async tasks. Execution context is an abstract concept that holds
+information about the environment within the current code being executed. Consider the following example:
+
+```js
+const callback = function() {
+  console.log('setTimeout callback context is', this);
+}
+const ctx1 = { name: 'ctx1'};
+const ctx2 = { name: 'ctx2'};
+const func = function() {
+  console.log('caller context is', this);
+  setTimeout(callback);
+}
+func.apply(ctx1);
+func.apply(ctx2);
+```
+
+The value of `this` in the callback of `setTimeout()` might differ depending on when `setTimeout()` is called. Thus, you
+can lose the context in asynchronous operations.
+
+A zone provides a new zone context other than `this`, the zone context that persists across async operations. In the following
+example, the new zone context is called `zoneThis`.
+
+```js
+zone.run(() => {
+  // now you are in a zone
+  expect(zoneThis).toBe(zone);
+  setTimeout(function() {
+    // the zoneThis context will be the same zone when the setTimeout is scheduled
+    expect(zoneThis).toBe(zone);
+  })
+});
+```
+
+The new context, `zoneThis`, can be retrieved from the `setTimeout()` callback function, and this context is the same
+when the `setTimeout()` is scheduled. To get the context, you can call `Zone.current`.
+
+### NgZone
+While Zone.js can monitor all states of sync and async operations, Angular additionally provides a service called NgZone.
+This service creates a zone named `angular` to automatically trigger change detection when the following conditions are
+satisfied:
+1. When a sync or async function is executed.
+2. When there is no `microtask` scheduled.
+
+#### NgZone `run()` and `runOutsideOfAngular()`
+Zone handles most async APIs such as `setTimeout()`, `Promise.then()` and `addEventListener()`, ... etc. Therefore in
+those async APIs, you don't need to trigger change detection manually.
+
+There are still some 3rd party APIs that Zone does not handle. In those cases, the `NgZone` service provides a `run()`
+method that allows you to execute a function inside the angular zone. This function, and all async operations in that
+function, trigger change detection automatically at the correct time.
+
+By default, all async operations are inside the angular zone, which triggers change detection automatically. Another
+common case is when you don't want to trigger change detection. In that situation, you can use another `NgZone` method:
+`runOutsideAngular()`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

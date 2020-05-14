@@ -1,4 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 
 @Component({
   selector: 'app-basic-form',
@@ -36,8 +42,7 @@ export class BasicFormComponent implements OnInit {
   @Input()
   get actions() {
     return {
-      save: this.save,
-      cancel: this.cancel
+      save: () => this.save()
     };
   }
   private isStringDataOk(data) {
@@ -49,8 +54,9 @@ export class BasicFormComponent implements OnInit {
     this.message = 'Hello from sayHi';
     this.messageChange.emit(this.message);
   }
-  save() {
+  save():void {
     console.log('saving ...');
+    this.cancel();
   }
   cancel() {
     console.log('cancelling ...');
