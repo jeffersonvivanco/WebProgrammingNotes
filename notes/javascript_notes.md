@@ -650,6 +650,8 @@ assignment, enumeration, function invocations, etc.). ===> Look at `programming_
   * `Object.create()` - creates a new object with the specified prototype object and properties
   * `Object.getOwnPropertyDescriptor()` - returns a property descriptor for a named property on an object
   * `Object.getPrototypeOf()` - returns the `prototype` of the specified object
+  * `Object.assign()` - copies the values of all enumerable own properties from one or more source objects
+    to a target object.
   
 
 ## Eloquent Javascript
