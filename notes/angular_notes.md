@@ -182,6 +182,86 @@ The `$any()` cast function also works with `this` to allow access to undeclared 
 When you use an SVG as a template, you are able to use directives and bindings just like with HTML templates. This means
 that you'll be able to dynamically generate interactive graphics.
 
+## Routing & Navigation
+### `<base href>`
+If you are working without the cli, make sure that you have `<base href="/">` in the `<head>` of your index.html file.
+This assumes that the app folder is the application root, and uses "/".
+
+### Generate an app with routing enabled
+`ng new routing-app --routing`
+
+### Getting route info
+You can use a route to pass information to your app components. To do so, you use the `ActivatedRoute` interface.
+Ex, if you inject `private route:ActivatedRoute` into your component then you can do
+```js
+this.route.queryParams.subscribe(params => {
+  console.log(params['name']);
+});
+```
+To pass query params, either pass them through the value `[queryParams]` if using `routerLink` or
+through the `NavigationExtras` object when calling `navigate()`
+
+### Using relative paths
+Relative paths allow you to define paths that are relative to the current URL segment. You can use the `../` notation
+to go up a level. You can also use `./` or no leading slash to specify the current level.
+
+#### Specifying a relative route
+To specify a relative route, use the `NavigationExtras` `relativeTo` property. After the link parameters array add an
+object with the `relativeTo` property set to the `ActivatedRoute`, which is `this.route`.
+
+### Accessing query parameters and fragments
+First, inject the activated route service, `constructor(private route: ActivatedRoute)`. Here's an example where we get
+the `id` param.
+```js
+this.route.paramMap.pipe(
+  switchMap(params => {
+    this.selectedId = Number(params.get('id'));
+    return this.service.getHeroes();
+  })
+)
+```
+If you don't want to use an observable, you can do this: `this.route.snapshot.paramMap.get('id')`.
+
+To pass params to route use: `this.router.navigate(['/heroes', {id: itemId}]);`
+
+### Lazy Loading
+You can configure your routes to lazy load modules, which means that Angular only loads modules as needed, rather than
+loading all modules when the app launches. Additionally, you can preload parts of your app in the background to improve
+the user experience.
+
+### Preventing unauthorized access
+Use route guards to prevent users from navigating to parts of an app without authorization. The following route guards
+are available in Angular:
+* `CanActivate`,
+* `CanActivateChild`,
+* `CanDeactivate`,
+* `Resolve`,
+* `CanLoad`
+
+To use route guards, consider using component-less routes as this facilitates guarding child routes.
+
+Create a service for your guard: `ng g guard your-guard`. In your guard class, implement the guard you want to use. For
+example
+```ts
+export class YourGuard implements CanActivate {
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    // your logic goes here
+  }
+}
+```
+In your routing module, use the appropriate property in your `routes` configuration.
+```js
+routes = [{
+  path: '/your-path',
+  component: YourComponent,
+  canActivate: [YourGuard]  
+}]
+```
+
+### Register `Router` and `Routes`
+In order to use the `Router`, you must first register the `RouterModule` from the `@angular/router` package. Define an
+array of routes and pass them to the `RouterModule.forRoot()` method.
+
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
   * `ng add @angular/elements`
@@ -233,6 +313,85 @@ the `angular.json` in 3 places as follows:
 <script type="text/javascript" src="http://localhost:8081/main.js"></script>
 <script type="text/javascript" src="http://localhost:8082/main.js"></script>
 ```
+
+### Angular Application bootstrapped in a custom element
+This approach is different because it creates a custom element and on `connectedCallback` it
+bootstraps the application and renders the main component. On the `disconnectedCallback`, it
+destroys the application platform (all modules and services). This approach will give you
+a clean app every time you render the custom element. Recommended only if the **entire** app
+represents a web component. To use one app to develop multiple web components, follow the approach
+above. 
+
+#### Steps
+1. `ng add ngx-build-plus` and follow the steps above relevant to ngx-build-plus
+2. Instead of creating a custom element in `app.module.ts`, we are going to bootstrap the main component.
+   You can add the component to the `bootstrap` list in the metadata of `AppModule` or you can implement
+   the `ngDoBootstrap(appRef: ApplicationRef)` method.
+3. In `main.ts` we define the class for our web component and we use the `customElements.define()` to
+   define custom element.
+   
+   ```typescript
+   // Class that will be provided as a service to components to access any data from the
+   // custom element's attributes or events.
+   export class ProvidedData {
+     constructor(public data, public parentNgZone: NgZone) {}
+   }
+   
+   function init(standalone: boolean, data?: ProvidedData) {
+     const pref: any = data ? platformBrowserDynamic([{provide: ProvidedData, useValue: data}]) : platformBrowserDynamic();
+     if (!standalone && data && data.parentNgZone) {
+       data.parentNgZone.runOutsideAngular(() => {
+         pref.bootstrapModule(AppModule)
+           .catch(err => console.error(err));
+       });
+     } else {
+       pref.bootstrapModule(AppModule)
+         .catch(err => console.error(err));
+     }
+     pref.onDestroy(() => {
+       console.log('platform destroying...');
+     });
+     return pref;
+   }
+   
+   class CustomPlaygroundWeb extends HTMLElement {
+     pref;
+     _data;
+     _parentNgZone;
+     constructor() {
+       super();
+     }
+     set data(data) {
+       console.log('data provided to component', data);
+       this._data = data;
+       this.render();
+     }
+     // If the parent app is another angular app then we want to run the
+     // bootrstrap code outside of the parent's angular cause the parent
+     // doesn't need to keep watch on the child app. The child app will
+     // create its own ngZone and detect changes.
+     set parentNgZone(ngZone: NgZone) {
+       console.log('parents ngZone provided', ngZone);
+       this._parentNgZone = ngZone;
+       this.render()
+     }
+     connectedCallback() {
+       const div = document.createElement('app-playground-web');
+       this.appendChild(div);
+     }
+     disconnectedCallback() {
+       if (this.pref) this.pref.destroy();
+       console.log('destroying web component');
+     }
+     render() {
+       if (!this._data || !this._parentNgZone) return;
+       if (this.pref) this.pref.destroy();
+       this.pref = init(false, new ProvidedData(this._data, this._parentNgZone));
+     }
+   }
+   customElements.define('playground-web', CustomPlaygroundWeb);
+   init(true);
+   ```
 
 ## Angular Animations
 ### Getting Started
