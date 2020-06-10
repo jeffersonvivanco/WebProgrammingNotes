@@ -1,3 +1,11 @@
 <h1 class="title">
   {{title}}
 </h1>
+<nav class="nav-bar">
+  <a routerLink="/home" routerLinkActive="active">Home</a>
+  <a routerLink="/heroes" routerLinkActive="active">Heroes</a>
+  <a routerLink="/about" routerLinkActive="active">About</a>
+</nav>
+<div [@routeAnimation]="getAnimationData(routerOutlet)">
+  <router-outlet #routerOutlet="outlet"></router-outlet>
+</div>

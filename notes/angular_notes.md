@@ -260,7 +260,104 @@ routes = [{
 
 ### Register `Router` and `Routes`
 In order to use the `Router`, you must first register the `RouterModule` from the `@angular/router` package. Define an
-array of routes and pass them to the `RouterModule.forRoot()` method.
+array of routes and pass them to the `RouterModule.forRoot()` method. The `RouterModule.forRoot()` method returns a module
+that contains the configured `Router` service provider, plus other providers that the routing library requires. Once the
+application is bootstrapped, the `Router` performs the initial navigation based on the current browser URL. The 
+`RouterModule.forRoot()` method is a pattern used to register application-wide providers. 
+
+### Feature Module's routes
+Only call `RouterModule.forRoot()` in the root `AppRoutingModule`. In any other module, you must call the 
+`RouterModule.forChild()` method to register additional routes.
+
+### Observable `paramMap` and component reuse
+By default, the router re-uses a component instance when it re-navigates to the same component type without
+revisiting a different component first. The route parameters could change each time.
+
+### `snapshot:` the no-observable alternative
+When you know for certain that a component instance will never be re-used, you can use `snapshot`.
+`route.snapshot` provides the initial value of the route parameter map. You can access the params directly
+without subscribing or adding observable operators as int he following: `this.route.snapshot.paramMap.get('id')`.
+`snapshot` only gets the initial value of the parameter map with this technique. Use the observable `paramMap`
+approach if there's a possibility that the router could re-use the component.
+
+### Route parameters: Required or optinal?
+Use route parameters to specify a required parameter value within a route URL. You can also add optional information
+to a route request. Optional paramters aren't involved in pattern matching and afford flexibility of expression.
+Define optional parameters in a separate object after you define the required route parameters. In general, use a
+required route parameter when the value is mandatory (for example, if necessary to distinguish one route path from
+another); and an optional paramter when the value is optional, complex, and/or multivariate.
+
+The optional route parameters are not separated by "?" adn "&" as they would be in the URL query string. They are
+separated by semicolons ";". This is matrix URL notation. Matrix URL notation is an idea first introduced in a
+1996 proposal by the founder of the web, Tim Berners-Lee. Although matrix notation never made it into the HTML
+standard, it is legal and it became popular among browser routing systems as a way to isolate parameters belonging
+to parent and child routes. As such, the Router provides support for the matrix notation across browsers.
+
+### Adding routable animations
+1. Import the `BrowserAnimationsModule`
+2. Add a `data` object to the routes. Transitions are based on `states` and you use the `animation` data from
+   the route to provide a named `animation` state for the transitions.
+   ex: `{ path: 'heroes',  component: HeroListComponent, data: { animation: 'heroes' } }`
+3. Create an `animations.ts` file.
+  
+   ```typescript
+   import {
+     trigger, animateChild, group,
+     transition, animate, style, query
+   } from '@angular/animations';
+   
+   
+   // Routable animations
+   export const slideInAnimation =
+     trigger('routeAnimation', [
+       transition('heroes <=> hero', [
+         style({ position: 'relative' }),
+         query(':enter, :leave', [
+           style({
+             position: 'absolute',
+             top: 0,
+             left: 0,
+             width: '100%'
+           })
+         ]),
+         query(':enter', [
+           style({ left: '-100%'})
+         ]),
+         query(':leave', animateChild()),
+         group([
+           query(':leave', [
+             animate('300ms ease-out', style({ left: '100%'}))
+           ]),
+           query(':enter', [
+             animate('300ms ease-out', style({ left: '0%'}))
+           ])
+         ]),
+         query(':enter', animateChild()),
+       ])
+     ]);
+   ```
+4. Add an `animations` array to the `@Component` metadata that contains the `slideAnimation`.
+5. In order to use the routable animations, wrap the `RouterOutlet` inside an element, use the
+   `@routeAnimation` trigger, and bind it to the element.
+6. For the `@routeAnimation` transitions to key off states, provide it with the `data` from the
+   `ActivatedRoute`. The `RouterOutlet` is exposed as an `outlet` template variable, so you bind
+   a reference to the router outlet. ex:
+   ```html
+   <div [@routeAnimation]="getAnimationData(routerOutlet)">
+     <router-outlet #routerOutlet="outlet"></router-outlet>
+   </div>
+   ```
+7. The `@routeAnimation` property is bound to the `getAnimationData()` with the provided `routerOutlet`
+   reference, so the next step is to define that function in the `AppComponent`. The `getAnimationData()`
+   function returns the animation property from the `data` provided through `ActivatedRoute`. The `animation`
+   property matches the `transition` names you used in the `slideInAnimation` defined in `animations.ts`.
+   ```typescript
+   export class AppComponent {
+     getAnimationData(outlet: RouterOutlet) {
+       return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+     }
+   }
+   ```
 
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.

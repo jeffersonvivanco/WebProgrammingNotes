@@ -2,3 +2,6 @@
 body {
   font-family: monospace;
 }
+.active {
+  font-weight: bolder;
+}

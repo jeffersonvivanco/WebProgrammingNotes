@@ -1,0 +1,6 @@
+<h2>Heroes</h2>
+<ul>
+  <li *ngFor="let h of heroes;"
+      [routerLink]="['/heroes', h.name]"
+      routerLinkActive="active" [class.selected]="h.visited">{{h.name}}</li>
+</ul>

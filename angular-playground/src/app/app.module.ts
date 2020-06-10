@@ -6,19 +6,26 @@ import {
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BasicFormComponent } from './basic-form/basic-form.component';
-import {BasicFormService} from './basic-form/basic-form.service';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
+import { HeroesModule } from './heroes/heroes.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BasicFormComponent
+    NotFoundComponent,
+    HomeComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    HeroesModule,
     AppRoutingModule
   ],
-  providers: [BasicFormService],
+  providers: [],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,8 +1,0 @@
-.basic-form {
-  border: 1px solid black;
-  border-radius: 5px;
-  display: grid;
-  padding: 10px;
-  grid-template-rows: 1fr 2fr 1fr;
-  font-size: 2em;
-}

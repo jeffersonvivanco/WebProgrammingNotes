@@ -1,3 +1,6 @@
 .title {
   text-align: center;
 }
+.nav-bar :nth-child(n):not(:last-child) {
+  margin-right: 10px;
+}
