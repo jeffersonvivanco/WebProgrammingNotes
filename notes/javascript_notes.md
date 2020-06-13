@@ -77,6 +77,15 @@ displays the results in the Profile panel.
   * `debug(nameOfFunction)` - suppose that your JS contains a function called `hideModal`. Running `debug(hideModal)` pauses your code on the first line of
   `hideModal` the next time it's called.
 
+## The Intersection Observer API
+Provides a way to asynchronously observe changes in the intersection of a target element with an ancestor element or with a top
+level document's viewport.
+* `IntersectionObserver`
+  * `observe(e)` - tells the `InteractionObserver` a target element to observe
+  * `disconnect()` - stops the `InteractionObserver` object from observing any target
+  * `unobserve(e)` - tells the `InteractionObserver` to stop observing a particular target element
+Look at intersectionObserverAPI.html
+
 
 ## ES6
 

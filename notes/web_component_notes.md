@@ -94,3 +94,102 @@ we wanted and got them working together. We then isolated individual pieces of f
    more consumable. Code can be shared between teams more easily. And as a by-product, code quality will be improved,
    as developers can re-use existing components. Finally, apps that are using native web components reap the benefits,
    when you add a fix or add a new feature, these changes get propagated down to each instance.
+   
+* Web Components - is a suite of different technologies allowing you to create resuable custom elements--with their functionality encapsulated
+  away from the rest of your code--and utilize them in your web apps.
+  * It consists of 3 main technologies, which can be used together to create versatile custom elements with encapsulated functionality that can
+  be resused wherever you like without fear of code collisions.
+    * **Custom Elements**: A set of JS APIs that allow you to define custom elements and their behavior, which can be used as desired in your user
+    interface.
+      * There are two types of custom elements:
+        * **Autonomous custom elements** - are standalone--they dont inherit from standard HTML elements. You use these on a page by literally
+        writing them out as an HTML element. For example `<popup-info>` or `document.createElement('popup-info')`. Autonomous nearly always 
+        extend `HTMLELement`.
+        * **Customized built-in elements** - inherit from basic HTML elements. To create one of these, you have to specify which element they
+        extend, and they are used by writing out the basic element but specifying the name of the custom element in the `is` attribute. For
+        example `<p is="word-count">`, or `document.createElement('p', {is: 'word-count'})`.
+      * `window.customElements` - returns a reference to the `CustomElementsRegistry` object
+      * CSS pseudo-classes
+        * `:defined` - Matches any element that is defined, including built-in elements and custom elements defined with `CustomElementRegistry.define()`
+        * `:host` - Selects the shadow host of the Shadow DOM containing the CSS it is used inside
+        * `:host()` - Selects the shadow host of the shadow DOM containing the CSS it is used inside (so you can select a custom element from inside
+        its shadow DOM)--but only if the selector given as the function's parameter matches the shadow host.
+        * `:host-context()` - Selects the shadow host of the Shadow DOM containing the CSS it is used inside (so you can select the custom element
+        from inside its shadow DOM)--but only if the selector given as the function's parameter matches the shadow host's ancestor(s) in the place
+        it sits inside the DOM hierarchy.
+    * **Shadow DOM**: A set of JS APIs for attaching an encapsulated "shadow" DOM tree to an element--which is rendered separately from the main
+    document DOM--and controlling associated functionality. In this way, you can keep an element's features private, so they can be scripted and styled
+    without the fear of collision with other parts of the document.
+      * High-level view
+        * DOM - a tree-like structure of connected nodes that represents the different elements and strings of text appearing in a markup document
+        * Shadow DOM allows hidden DOM trees to be attached to elements in the regular DOM tree--this shadow DOM tree starts with a shadow root,
+        underneath which can be attached to any elements you want, in the same way as the normal DOM.
+      * Basic Usage
+        * You can attach a shadow root to any element using the `Element.attachShadow()` method. This takes as its parameter an options object that
+        contains one option--`mode`--with a value of `open` or `closed`.
+        * `open` - means that you can access the shadow DOM using JS written in the main page context, for ex: `let myShadowDom = myCustomElem.shadowRoot;`
+        * `closed` - means you won't be able to access the shadow DOM from the outside
+        * To attach a shadow DOM to a custom element as part of its constructor, you would do:
+        ```js
+        let shadow = this.attachShadow({mode: 'open'});
+        var para = document.createElement('p');
+        shadow.appendChild(para);
+        ```
+    * **HTML Templates**: The `<template>` and `<slot>` elements enable you to write markup templates that are not displayed in the rendered page.
+    These can be resused multiple times as the basis of a custom element's structure. This element and its contents are not rendered in the DOM, but
+    it can still be referenced using JS.
+      * Using templates with web components - templates are useful on their own, but they work even better with web components.
+      * Adding flexibility with slots - We can make it possible to display different text in each element instance in a nice declarative way using
+      `<slot>` element.
+        * Slots are identified by their `name` attribute, and allow you to define placeholders in your template that can be filled with any markup
+        fragment you want when the element is used in the markup.
+  * The basic approach for implementing a web component generally looks something like this:
+    1. Create a class or a function in which you specify your web component functionality.
+    2. Register your new custom element using the `CustomElementRegistry.define()` method, passing it the element name to be defined, the class or
+    function in which its functionality is specifed, and optionally, what element it inherits from.
+    3. If required, attach a shadow DOM to the custom element using `Element.attachShadow()` method. Add child elements, event listeners, etc., to
+    the shadow DOM using regular DOM methods.
+    4. If required, define an HTML template using `<template>` and `<slot>`. Again, use regular DOM methods to clone the template and attach it to
+    your shadow DOM.
+    5. Use your custom element wherever you like on your page, just like you would any regular HTML element.
+  * Using lifecycle callbacks - you can define several different callbacks inside a custom element's class definition, which fire at different points
+  in the element's lifecycle.
+    * `connectedCallback` - invoked each time the custom element is appended into a document-connected element. This will happen each time the node
+    is moved, and may happen before the element's contents have been fully parsed. Note: this callback may also be called once your element is no
+    longer connected, use `Node.isConnected` to make sure.
+    * `disconnectedCallback` - invoked each time the custom element is disconnected from the document's DOM
+    * `adoptedCallback` - invoked each time the custom element is moved to a new document
+    * `attributeChangedCallback` - invoked each time one of the custom element's attributes is added, removed, or changed. Which attributes to notice
+    change for is specified in a static get `observedAttributes` method.
+  * What are Micro Frontends?
+    * The idea behind micro frontends is to think about a website or web app as **a composition of features** which are owned by independent teams.
+    Each team has a **distinct area of business or mission** it cares about and specialises in. A team is **cross functional** and develops its 
+    features **end-to-end, from database to user interface**.
+    * Core ideas behind Micro Frontends
+      * Be technology agnostic - Each team should be able to choose and upgrade their stack without having to coordinate with other teams. Custom
+      Elements are a great way to hide implementation details while providing a neutral interface to others.
+      * Isolate Team Code - Don't share a runtime, even if all teams use the same framework. Build independent apps that are self contained.
+      Dont rely on shared state or global variables.
+      * Establish team prefixes - Agree on naming conventions where isolation is not possible yet. Namespace CSS, Events, Local Storage, and Cookies
+      to avoid collisions and clarify ownership.
+      * Favor Native Browser features over Custom APIs - Use Browser Events for communication instead of building a global PubSub system. If you
+      really have to build a cross team API, try keeping it as simple as possible.
+      * Build a Resilient Site - Your feature should be useful, even if JS failed or hasn't executed yet. Use Universal Rendering and Progressive
+      Enhancement to improve perceived performance.
+    * The DOM is the API
+      * Each team builds their component **using their web technology of choice and wraps it inside a Custom Element**. The DOM specification of this
+      particular element (tag-name, attributes, & events) acts as the contract or public API for other teams. The advantage is that they can use
+      the component and it functionality without having to know the implementation. They just have to interact with the DOM.
+    * Page Composition - beside the client and serverside integration of code written in different frameworks itself, there are a lot of side topics
+    that should be discussed: mechanisms to isolate js, avoid css conflicts, load resources as needed, share common resources between teams, handle
+    data fetching and think about good loading states for the user.
+    * Child-Parent or Siblings Communication - Both fragments can build some kind of internal JS API that lets one app communicate with the other.
+    But this would require the component instances to know each other and would also be an isolation violation. A cleaner way is to use the a PubSub
+    mechanism, where a component can pusblish a message and other components can subscribe to specific topics. Luckily browsers have this feature
+    built-in. This is exactly how browser events like `click`, `select`, or `mouseover` work. In addition to native events there is also the
+    possibility to create higher level events with `new CustomEvent(...)`. Events are always tied to the DOM node they were created/dispatched on.
+    Most native events also feature bubbling. This makes it possible to listen for all events on a specific sub-tree of the DOM. If you want to listen
+    all events on the page, attach the event listener to the window element. Imperatively calling DOM methods is quite uncommon, but can be found in
+    video element api for example. If possible, the use of declarative approach (attribute change) should be preferred.
+       
+
