@@ -2,7 +2,7 @@
 
 ## Classes
 
-### `public`, `private`, and `protected` modifies
+### `public`, `private`, and `protected` modifiers
 * public by default. You may still mark a member `public` explicitly.
 * ECMAScript Private Fields
   ```ts

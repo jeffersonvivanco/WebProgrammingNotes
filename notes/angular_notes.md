@@ -280,7 +280,7 @@ without subscribing or adding observable operators as int he following: `this.ro
 `snapshot` only gets the initial value of the parameter map with this technique. Use the observable `paramMap`
 approach if there's a possibility that the router could re-use the component.
 
-### Route parameters: Required or optinal?
+### Route parameters: Required or optional?
 Use route parameters to specify a required parameter value within a route URL. You can also add optional information
 to a route request. Optional paramters aren't involved in pattern matching and afford flexibility of expression.
 Define optional parameters in a separate object after you define the required route parameters. In general, use a

@@ -8,6 +8,15 @@ read in the MDN docs and other blogs and articles.
   * `<img>`
     * The HTML 5 `srcset` and `sizes` attributes define multiple images at different sizes and resolutions. The browser then
     selects the most appropriate version for the device.
+  * `<address>`
+    * The HTML `<address>` element indicates that the enclosed HTML provides contact information for a person or people,
+      or for an organization.
+    * The contact information provided by an `<address>` element's contents can take whatever form is appropriate for the
+      context, and may include any type of contact information that is needed such as a physical address, URL, email address,
+      phone number, social media handle, geographic coordinates, and so forth. The `<address>` element should include the
+      name of the person, people, or organization to which the contact information refers. `<address>` can be used in a
+      variety of contexts, such as providing a business's contact information in the page header, or indicating the author
+      of an article by including an `<address>` within `<article>`.  
 * HTML Events
   * `load`
     * fires after all sources (css) have been loaded which could not be the case with `DOMContentLoaded`
