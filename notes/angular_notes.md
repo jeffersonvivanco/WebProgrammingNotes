@@ -358,6 +358,21 @@ to parent and child routes. As such, the Router provides support for the matrix 
      }
    }
    ```
+   
+### `RouteReuseStrategy`
+Provides a way to customized when activated routes get reused. To use, extend the class and override methods.
+Then add your new class to the `providers` list like:
+```js
+{
+  providers: [
+    {
+      provide: RouteReuseStrategy,
+      useClass: YourClass
+    }
+  ]
+}
+```
+
 
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
