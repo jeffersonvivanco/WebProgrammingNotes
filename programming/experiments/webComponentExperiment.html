@@ -9,7 +9,12 @@
     <h1 slot="name">Jefferson</h1>
 </my-person>
 <template id="my-person-template">
-    <slot name="name">Name</slot>
+    <style>
+        .text-color {
+            color: blue;
+        }
+    </style>
+    <slot name="name" class="text-color">Name</slot>
 </template>
 <script>
     class Person extends HTMLElement {
