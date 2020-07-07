@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Height</title>
+    <style>
+        .container {
+            height: 400px;
+            width: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .message {
+            background-color: red;
+            height: 100%;
+            position: relative;
+        }
+        .info {
+            background-color: blue;
+            height: max-content;
+        }
+    </style>
+</head>
+<body>
+<section class="container">
+    <article class="message">
+        <span>Hello Jeff</span>
+        <div class="info">
+            <div>age: 25</div>
+        </div>
+    </article>
+</section>
+</body>
+</html>

@@ -23,7 +23,7 @@
             space-seperated list of values. The values represent the track size, and the space between them
             represents the grid line.
             * If your definition contains repeating parts, you can use the repeat() notation to streamline
-            things.
+            things. ex: repeat(3, 1fr)
              */
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 300px 300px;
@@ -33,6 +33,9 @@
             span those cells. A period signifies an empty cell. The syntax itself provides a visualization of
             the structure of the grid.
             * Each row in your declaration needs to have the same number of cells.
+            * You need to have every cell of the grid filled.
+            * Areas must be rectangular--you can't have an L-shaped area for example.
+            * Areas can't be repeated in different locations.
             */
             grid-template-areas: 
             "item1 item2"
@@ -94,6 +97,13 @@
             background-color: yellow;
             grid-area: item4;
         }
+        .text-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .text-container > span:first-child {
+            grid-column: 1/-1;
+        }
     </style>
 </head>
 <body>
@@ -102,6 +112,10 @@
         <article class="item item-2"></article>
         <article class="item item-3"></article>
         <article class="item item-4"></article>
+    </section>
+    <section class="text-container">
+        <span>Hello</span>
+        <span>JEFFERSON</span>
     </section>
 </body>
 </html>

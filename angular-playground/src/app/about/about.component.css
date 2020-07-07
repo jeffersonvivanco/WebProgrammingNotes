@@ -1,0 +1,22 @@
+.show {
+  height: 100px;
+  overflow: auto;
+}
+.show > article {
+  height: 600px;
+  border: 1px solid black;
+  padding: 10px;
+}
+.show > article:not(:last-child) {
+  margin-bottom: 20px;
+}
+.anchors {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.anchors > span:not(:last-child) {
+  margin-right: 10px;
+}
+.anchors > span {
+  cursor: pointer;
+}

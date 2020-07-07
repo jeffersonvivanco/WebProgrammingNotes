@@ -1,1 +1,20 @@
-<p>about works!</p>
+<h2>About</h2>
+<nav class="anchors">
+  <span [routerLink]="[route.snapshot.url]" fragment="contact">Contact</span>
+  <span [routerLink]="[route.snapshot.url]" fragment="team">Team</span>
+  <span (click)="goTo('info')">Info</span>
+</nav>
+<section class="show">
+  <article id="contact">
+    <h3>Contact</h3>
+    <p>Something here about how to contact us.</p>
+  </article>
+  <article id="team">
+    <h3>Team</h3>
+    <p>Team members</p>
+  </article>
+  <article id="info">
+    <h3>Info</h3>
+    <p>Information about the team.</p>
+  </article>
+</section>

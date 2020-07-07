@@ -242,6 +242,8 @@ Look at cssGrid.html
     * specifies the size of any auto-generated grid tracks (aka implicit grid tracks). Implicit tracks get
     created when there are more grid items than cells in the grid or when a grid item is placed outside of
     the explicit grid.
+    * `minmax()` - lets us set a min and max size for a track, for ex: `minmax(100px, auto)`. The min size is 100px, but
+      the max is `auto`, which will expand to fit the content.
   * `grid-auto-flow`
     * if you have grid items that you don't explicitly place on the grid, the *auto-placement-algorithm* kicks
     in to automatically place the items. This property controls how the auto-placement algorithm works.
@@ -249,7 +251,10 @@ Look at cssGrid.html
       * row - tells the auto-placement algorithm to fill in each row in turn, adding new rows as necessary (default)
       * column - tells the auto-placement algorithm to fill in each column in turn, adding new columns as necessary
       * dense - tells the auto-placement algorithm to attempt to fill in holes earlier in the grid if smaller items
-      come up later Note: dense only changes the visual order of your items and might cause them to appear out of order, which is bad for accessibility.
+        come up later Note: dense only changes the visual order of your items and might cause them to appear out of order, 
+        which is bad for accessibility.
+  * As many columns as will fit - sometimes it is helpful to be able to ask grid to create as many columns as will fit into
+    the container. We do this like this: `grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))`
 * Properties for the Children (Grid Items)
   * `grid-column-start, grid-column-end, grid-row-start, grid-row-end`
     * determines a grid item's location within the grid by referring to specific grid lines.
@@ -262,11 +267,13 @@ Look at cssGrid.html
       * `auto` - indicates auto-placement, an automatic span, or a default span of one
     * if no `grid-column-end/grid-row-end` is declared, the item will span 1 track by default
     * items can overlap each other. You can use z-index to control their stacking order.
-  * `grid-column, grid-row` - shorthand for `grid-column-start` + `grid-column-end`, and `grid-row-start`
-  * `grid-row-end`
+  * `grid-column, grid-row` - shorthand for `grid-column-start` + `grid-column-end`, and `grid-row-start` + `grid-row-end`
     * values
       * `<start-line>/<end-line>` - each one accepts all the same values as the longhand version, including span
-  * `grid-area` - gives an item a name so that it can be referenced by a template created with the `grid-template-areas` property. Alternatively, this property can be used as an even shorter shorthand for `grid-row-start` + `grid-column-start` + `grid-row-end` + `grid-column-end`
+    * You can also use the value `-1` to target the end column or row line, and count inwards from the end using negative
+      values. However this only works for the explicit grid. The value `-1` will not target 
+  * `grid-area` - gives an item a name so that it can be referenced by a template created with the `grid-template-areas` property. Alternatively, 
+    this property can be used as an even shorter shorthand for `grid-row-start` + `grid-column-start` + `grid-row-end` + `grid-column-end`
     * values
       * `<name>` - a name of your choosing
       * `<row-start>/<column-start>/<row-end>/<column-end>` can be numbers or named lines
@@ -371,3 +378,5 @@ Look at cssGrid.html
 * `::selection` - applies styles to the part of a document that has been highlighted by the user (such as clicking and dragging the mouse across text).
 * `::spelling-error` - represents a text segment which the user agent has flagged as incorrectly spelled.
   * *NOT SUPPORTED BY ANY BROWSER*
+
+## CSS Font Styling

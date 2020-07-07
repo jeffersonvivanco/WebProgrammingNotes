@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-about',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutComponent implements OnInit {
 
-  constructor() { }
+  constructor(public route: ActivatedRoute) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+  goTo(id) {
+    const el = document.getElementById(id);
+    el.scrollIntoView();
   }
-
 }

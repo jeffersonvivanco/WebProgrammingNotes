@@ -205,6 +205,8 @@ through the `NavigationExtras` object when calling `navigate()`
 Relative paths allow you to define paths that are relative to the current URL segment. You can use the `../` notation
 to go up a level. You can also use `./` or no leading slash to specify the current level.
 
+Always specify the complete absolute path when calling router's `navigateByUrl()` method.
+
 #### Specifying a relative route
 To specify a relative route, use the `NavigationExtras` `relativeTo` property. After the link parameters array add an
 object with the `relativeTo` property set to the `ActivatedRoute`, which is `this.route`.
@@ -232,11 +234,11 @@ the user experience.
 ### Preventing unauthorized access
 Use route guards to prevent users from navigating to parts of an app without authorization. The following route guards
 are available in Angular:
-* `CanActivate`,
-* `CanActivateChild`,
-* `CanDeactivate`,
-* `Resolve`,
-* `CanLoad`
+* `CanActivate` to mediate navigation to a route.
+* `CanActivateChild` to mediate navigation to a child route.
+* `CanDeactivate` to mediate navigation away from the current route.
+* `Resolve` to perform route data retrieval before route activation.
+* `CanLoad` to mediate navigation to a feature module loaded asynchrnously.
 
 To use route guards, consider using component-less routes as this facilitates guarding child routes.
 
@@ -257,6 +259,29 @@ routes = [{
   canActivate: [YourGuard]  
 }]
 ```
+
+You need to control access to different parts of your app for various reasons. Some of which may include the following:
+* Perhaps the user is not authorized to navigate to the target component.
+* Maybe the user must login (authenticate) first.
+* Maybe you should fetch some data before you display the target component.
+* You might want to save pending changes before leaving a component.
+* You might ask the user if it's OK to discard pending changes rather than save them.
+
+You add guards to the route configuration to handle these scenarios.
+
+A guard's return value controls the router's behavior:
+* If it returns `true`, the navigation process continues.
+* If it returns `false`, the navigation process stops and the user stays put.
+* If it returns a `UrlTree`, the current navigation cancels and a new navigation is initiated to the `UrlTree` returned.
+
+The guard can also tell the router to navigate elsewhere, effectively cancelling the current navigation. When doing so
+inside a guard, the guard should return `false`.
+
+The guard might return its boolean answer synchronously. But in many cases, the guard can't produce an answer synchronously.
+The guard could ask the user a question, save changes to the server, or fetch fresh data. These are all asynchronous operations.
+Accordingly, a routing guard can return an `Observable<boolean>` or a `Promise<boolean>` and the router will wait for the
+observable to resolve to `true` or `false`. The observable provided to the `Router` must also complete. If the observable
+does not complete, the navigation does not continue.
 
 ### Register `Router` and `Routes`
 In order to use the `Router`, you must first register the `RouterModule` from the `@angular/router` package. Define an
@@ -372,6 +397,22 @@ Then add your new class to the `providers` list like:
   ]
 }
 ```
+
+### Displaying multiple routes in named outlets
+A template can also have any number of named outlets. Each named outlet has its own set of routes with their own components.
+Multiple outlets can display different content, determined by different routes, all at the same time.
+`<router-outlet name="popup"></router-outlet>`
+
+To clear the route `this.router.navigate([{outlets: {popup: null}}]);`
+
+In the route def, specify the outlet with the `outlet` property.
+
+To navigate to the route `<a [routerLink]="[{ outlets: { popup: ['compose'] } }]">Contact</a>`
+
+The `outlets` object within an outer object was unnecessary when there was only one route and one unnamed outlet. The
+router assumed that your route specification targeted the unnamed primary outlet and created these objects for you. Routing
+to a named outlet has revealed a router feature: you can target multiple outlets with multiple routes in the same
+`RouterLink` directive.
 
 
 ## Angular Microfrontend
