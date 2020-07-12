@@ -380,3 +380,66 @@ Look at cssGrid.html
   * *NOT SUPPORTED BY ANY BROWSER*
 
 ## CSS Font Styling
+
+### `font-weight`
+Sets the weight (boldness) of the font. The weights available depend on the font-family you are using.
+
+#### Syntax
+```css
+/* Keyword values*/
+font-weight: normal;
+font-weight: bold;
+
+/* Keyword values relative to the parent */
+font-weight: lighter; /* one relative font weight lighter than the parent element.  */
+font-weight: bolder; /* one relative font weight bolder than the parent element.  */
+/* 
+Note when using relative weights, only 4 font weights are considered--thin(100), normal(400),
+bold(700), and heavy(900).
+*/
+
+/* Numeric keyword values */
+font-weight: 100;
+font-weight: 200;
+font-weight: 300;
+font-weight: 400;// normal
+font-weight: 500;
+font-weight: 600;
+font-weight: 700;// bold
+font-weight: 800;
+font-weight: 900;
+
+/* Global values */
+font-weight: inherit;
+font-weight: initial;
+font-weight: unset;
+```
+#### Common weight mapping
+```text
+100 	Thin (Hairline)
+200 	Extra Light (Ultra Light)
+300 	Light
+400 	Normal (Regular)
+500 	Medium
+600 	Semi Bold (Demi Bold)
+700 	Bold
+800 	Extra Bold (Ultra Bold)
+900 	Black (Heavy)
+950 	Extra Black (Ultra Black)
+```
+#### Variable fonts
+Most fonts have a particular weight which corresponds to one of the numbers in Common weight mapping. However, some fonts,
+called variable fonts, can support a range of weights with a more or less fine granularity, and this can give the designer
+a much closer degree of control over the chosen weight.
+
+### `outline`
+Is a shorthand to set various outline properties in a single declaration: `outline-style`, `outline-width`, and `outline-color`
+
+#### Borders vs Outlines
+Borders and outlines are very similar. However, outlines differ from borders in the following ways:
+* Outlines never take up space, as they are drawn outside of an element's content.
+* According to the spec, outlines don't have to rectangular, although they usually are.
+#### Accessibility concerns
+Assigning `outline` a value of `0` or `none` will remove the browser's default focus style. If an element can be
+interacted with it must have a visible focus indicator. Provide obvious focus styling if the default focus style
+is removed.
