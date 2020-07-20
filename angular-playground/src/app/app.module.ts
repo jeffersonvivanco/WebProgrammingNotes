@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { HeroesModule } from './heroes/heroes.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { HighlightDirective } from './highlight.directive';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     NotFoundComponent,
     HomeComponent,
     AboutComponent,
+    HighlightDirective,
   ],
   imports: [
     BrowserModule,

@@ -2,12 +2,14 @@
 <nav class="anchors">
   <span [routerLink]="[route.snapshot.url]" fragment="contact">Contact</span>
   <span [routerLink]="[route.snapshot.url]" fragment="team">Team</span>
-  <span (click)="goTo('info')">Info</span>
+  <span [routerLink]="[route.snapshot.url]" fragment="info">Info</span>
 </nav>
 <section class="show">
   <article id="contact">
     <h3>Contact</h3>
-    <p>Something here about how to contact us.</p>
+    <p appHighlight>Something here about how to contact us.</p>
+    <input placeholder="name" (keyup)="onKey($event)"/>
+    <span>{{nameVal}}</span>
   </article>
   <article id="team">
     <h3>Team</h3>

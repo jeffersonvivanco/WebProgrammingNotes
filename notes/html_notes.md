@@ -29,8 +29,23 @@ and properties common to all kinds of elements. More specific classes inherit fr
 ### Properties
 * `Element.attributes` - returns a `NamedNodeMap` object containing the assigned attributes of the corresponding HTML
   element.
-  
-## NamedNodeMap
+
+### Methods
+* `Element.scrollIntoView()` - scrolls the element's parent container such that the element on which `scrollIntoView()`
+  is called is visible to the user.
+  * parameters
+    * `alignToTop` (optional) - boolean
+      * If `true` (default), the top of the element will be aligned to the top of the visible area of the scrollable ancestor.
+        Corresponds to `scrollIntoViewOptions: {block: "start", inline: "nearest"}`
+      * If `false`, the bottom of the element will be aligned to the bottom of the visible area of the scrollable ancestor.
+        Corresponds to `scrollIntoViewOptions: {block: "end", inline: "nearest"}`
+    * `scrollIntoViewOptions` (optional) - is an object with the following properties
+      * behavior (optional) - defines the transition animation. One of (default) `auto` or `smooth`.
+      * block (optional) - defines vertical alignment. One of (default) `start`, `center`, `end`, or `nearest`.
+      * inline (optional) - defines horizontal alignment. One of `start`, `center`, `end` or (default) `nearest`.
+    
+
+## NameNodeMap
 The `NamedNodeMap` interface represents a collection of `Attr` objects. Objects inside a `NamedNodeMap` are not in any
 particular order, unlike `NodeList`, although they may be accessed by an index as in an array. A `NamedNodeMap` object
 is *live* and will thus be auto-updated if changes are made to its contents internally or elsewhere.

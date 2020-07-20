@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scroll Into View</title>
+    <style>
+        .container {
+            height: 400px;
+            display: grid;
+            padding: 10px;
+            background-color: #cccccc;
+            row-gap: 10px;
+            overflow: auto;
+        }
+        .container > article {
+            border: 1px solid black;
+            border-radius: 25px;
+            height: 500px;
+            background-color: cornflowerblue;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <span onclick="goTo('about')">About</span>
+    <span onclick="goTo('contact')">Contact</span>
+    <span onclick="goTo('hours')">Hours</span>
+</nav>
+<section class="container">
+    <article id="about">
+        <header>About</header>
+    </article>
+    <article id="contact">
+        <header>Contact</header>
+    </article>
+    <article id="hours">
+        <header>Hours</header>
+    </article>
+</section>
+<script>
+    function goTo(id) {
+      const el = document.getElementById(id);
+      el.scrollIntoView({behavior: 'smooth'});
+    }
+</script>
+</body>
+</html>

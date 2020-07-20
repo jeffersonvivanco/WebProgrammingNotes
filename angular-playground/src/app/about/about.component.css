@@ -1,9 +1,5 @@
-.show {
-  height: 100px;
-  overflow: auto;
-}
 .show > article {
-  height: 600px;
+  height: 300px;
   border: 1px solid black;
   padding: 10px;
 }

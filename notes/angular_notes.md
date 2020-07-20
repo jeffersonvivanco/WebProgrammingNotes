@@ -181,6 +181,84 @@ The `$any()` cast function also works with `this` to allow access to undeclared 
 #### SVG in templates
 When you use an SVG as a template, you are able to use directives and bindings just like with HTML templates. This means
 that you'll be able to dynamically generate interactive graphics.
+### User Input
+#### Get user input from the `$event` object
+ex:
+```angular2html
+<input (keyup)="onKey($event)">
+<p>{{values}}</p>
+```
+When a user presses and releases a key, the `keyup` event occurs, and Angular provides a corresponding DOM
+event object in the `$event` variable which this code passes as a parameter to the component's `onKey()` method.
+To get the key value of the event => `$event.key`, value of the target => `$event.target.value`
+
+The properties of an `$event` object vary depending on the type of DOM event. For example, a mouse event includes
+different information than an input box editing event.
+
+All standard DOM event objects have a `target` property, a reference to the element that raised the event.
+
+##### Type the `$event`
+```typescript
+export class KeyUpComponent_v1 {
+  values = '';
+
+
+  onKey(event: KeyboardEvent) { // with type info
+    this.values += (event.target as HTMLInputElement).value + ' | ';
+  }
+}
+```
+The `$event` is now a specific `KeyboardEvent`. Not all elements have a value property so it casts `target` to an input
+element. The `OnKey` method more clearly expresses what it expects from the template and how it interprets the event.
+
+##### Passing `$event` is a dubious practice
+Typing the event object reveals a significant objection to passing the entire DOM event into the method: the component
+has too much awareness of the template details. It can't extract information without knowing more than it should about
+the HTML implementation. The breaks the separation of concerns between the template (what the user sees) and the component
+(how the application processes the user data).
+
+#### Get user input from a template reference variable
+There's another way to get user data: use Angular template reference variables. These variables provide direct access
+to an element from within the template.
+```typescript
+@Component({
+  selector: 'app-loop-back',
+  template: `
+    <input #box (keyup)="0">
+    <p>{{box.value}}</p>
+  `
+})
+export class LoopbackComponent { }
+```
+The template reference variable named `box`, declared on the `<input>` element, refers to the `<input>` element itself.
+The template is completely self contained. It doesn't bind to the component, and the component does nothing.
+
+##### This won't work at all unless you bind to an event
+Angular updates the bindings (and therefore the screen) only if the app does something in response to asynchronous events,
+such as keystrokes. This example code binds the `keyup` event to the number 0, the shortest template statement possible.
+While the statement does nothing useful, it satisfies Angular's requirement so that Angular will update the screen.
+
+#### Key event filtering (with `key.enter`)
+The `(keyup)` event handler hears every keystroke. Sometimes only the `Enter` key matters, because it signals that the
+user has finished typing. One way to reduce the noise would be to examine every `$event.keyCode` and take action only when
+the key is `Enter`.
+
+There's an easier way: bind to Angular's `keyup.enter` pseudo-event.
+
+#### On blur
+The component's `value` property is updated only when the user presses Enter. To fix this issue, listen to both the
+Enter key and the blur event.
+### Attribute directives
+An **attribute** directive changes the appearance or behavior of a DOM element.
+
+There are 3 kinds of directives in Angular:
+1. Components-directives with a template
+2. Structural directives-change the DOM layout by adding and removing DOM elements. ex: NgFor, NgIf
+3. Attribute directives-change the appearance or behavior of an element, component, or another directive. ex: NgStyle
+
+#### Built a simple attribute directive
+1. Generate a directive `ng g directive highlight`. Directives must be declared in Angular modules in the same manner
+   as components.
 
 ## Routing & Navigation
 ### `<base href>`
@@ -413,7 +491,6 @@ The `outlets` object within an outer object was unnecessary when there was only 
 router assumed that your route specification targeted the unnamed primary outlet and created these objects for you. Routing
 to a named outlet has revealed a router feature: you can target multiple outlets with multiple routes in the same
 `RouterLink` directive.
-
 
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
