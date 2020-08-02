@@ -259,6 +259,28 @@ There are 3 kinds of directives in Angular:
 #### Built a simple attribute directive
 1. Generate a directive `ng g directive highlight`. Directives must be declared in Angular modules in the same manner
    as components.
+   
+   The generated `highlight.directive.ts` is as follows:
+   ```ts
+   import { Directive } from '@angular/core';
+   
+   @Directive({
+     selector: '[appHighlight]'
+   })
+   export class HighlightDirective {
+     constructor() { }
+   }
+   ```
+   The `@Directive` decorator's lone configuration property specifies the directive's CSS attribute selector, `[appHighlight]`.
+   Its the brackets (`[]`) that make it an attribute selector. Angular locates each element in the template that has
+   an attribute named `appHighlight` and applies the logic of this directive to that element. The *attribute selector*
+   pattern explains the name of this kind of directive.
+   
+   
+### Dynamic Components
+
+## Dependency Injection
+Dependencies are services or objects that a class needs to perform its function.
 
 ## Routing & Navigation
 ### `<base href>`
@@ -461,6 +483,7 @@ to parent and child routes. As such, the Router provides support for the matrix 
      }
    }
    ```
+   
    
 ### `RouteReuseStrategy`
 Provides a way to customized when activated routes get reused. To use, extend the class and override methods.

@@ -443,3 +443,55 @@ Borders and outlines are very similar. However, outlines differ from borders in 
 Assigning `outline` a value of `0` or `none` will remove the browser's default focus style. If an element can be
 interacted with it must have a visible focus indicator. Provide obvious focus styling if the default focus style
 is removed.
+
+## CSS Styling Properties
+### 'box-shadow'
+Adds shadow effects around an element's frame. You can set multiple effects separated by commas. A box shadow is described
+by X and Y offsets relative to the element, blur and spread radius, and color.
+
+The `box-shadow` property enables you to cast a drop shadow from the frame of almost any element. If a `border-radius` is
+specified on the element with a box shadow, the box shadow takes on the same rounded corners. The z-ordering of multiple
+box shadows is the same as multiple text shadows (the first specified shadow is on top).
+
+#### Syntax
+```css
+/* Keyword values */
+box-shadow: none;
+
+/* offset-x | offset-y | color */
+box-shadow: 60px -16px teal;
+
+/* offset-x | offset-y | blur-radius | color */
+box-shadow: 10px 5px 5px black;
+
+/* offset-x | offset-y | blur-radius | spread-radius | color */
+box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+
+/* inset | offset-x | offset-y | color */
+box-shadow: inset 5em 1em gold;
+
+/* Any number of shadows, separated by commas */
+box-shadow: 3px 3px red, -1em 0 0.4em olive;
+
+/* Global keywords */
+box-shadow: inherit;
+box-shadow: initial;
+box-shadow: unset;
+```
+* `inset`- The presence of the `inset` keyword changes the shadow to one inside the frame (as if the content was depressed inside
+  the box). Inset shadows are drawn inside the border (even transparent ones), above the background, but below content.
+* `<offset-x> <offset-y>` - These are two length values to set the shadow offset. `<offset-x>` specifies the horizontal
+  distance. Negative values place the shadow to the left of the element. `<offset-y>` specifies the vertical distance. Negative
+  values place the shadow above the element. If both values are 0, the shadow is place behind the element (and may generate
+  a blur effect if `<blur-radius>` and/or `<spread-radius>` is set).
+* `<blur-radius>` - this is the 3rd length value. The larger this value, the bigger the blur, so the shadow becomes bigger
+  and lighter. Negative values are not allowed. If not specified, it will be 0 (the shadow's edge is sharp).
+* `<spread-radius>` - this is the 4th length value. Positive values will cause the shadow to expand and grow bigger, negative
+  values will cause the shadow to shrink. If not specified, it will be 0 (the shadow will be the same size as the element).
+* `<color>` - if not specified, it defaults to `currentcolor` (represents the value of an element's `color` property).
+
+Using a semi-transparent color like `rgba(0, 0, 0, 0.4)` is most common, and a nice effect, as it doesn't completely/opaquely
+cover what it's over, but allows what's underneath to show through a bit, like a real shadow.
+
+#### One-side only
+Using a negative spread radius, you can get squeeze in a box shadow and only push it off one edge of a box.

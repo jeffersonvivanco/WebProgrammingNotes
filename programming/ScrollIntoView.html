@@ -21,6 +21,7 @@
     </style>
 </head>
 <body>
+<h1>scrollTo / scrollInto</h1>
 <nav>
     <span onclick="goTo('about')">About</span>
     <span onclick="goTo('contact')">Contact</span>
@@ -39,8 +40,9 @@
 </section>
 <script>
     function goTo(id) {
-      const el = document.getElementById(id);
-      el.scrollIntoView({behavior: 'smooth'});
+      const container = document.querySelector('.container');
+      const target = document.getElementById(id);
+      container.scrollTo({left: 0, top: target.offsetTop - container.offsetTop, behavior: 'smooth'});
     }
 </script>
 </body>

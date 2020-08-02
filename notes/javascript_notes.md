@@ -907,9 +907,31 @@ about which function calls were on the stack when the problem occurred.
 
 *For problems that are expected to happen during routine use, crashing with an unhandled exception is a terribly strategy.*
 
-### Asynchronous Programming
+### Handling events
+#### Debouncing
+Some types of events have the potential to fire rapidly, many times in a row (the "mousemove" and "scroll" events for
+example). When handling such events, you must be careful not to do anything too time-consuming or your handler will take
+up so much time that interaction with the document starts to feel slow.
 
+If you need to do something nontrivial in such a handler, you can use `setTimeout` to make sure you are not doing it too
+often. This is usually called *debouncing* the event. There are several slightly different approaches to this.
 
+In first example, we want to react when the user has typed something, but we don't want to do it immediately for every
+input event. Instead of immediately performing an action in the event handler, we set a timeout. We also clear the previous
+timeout (if any) so that when events occur close together (closer than our timeout delay), the timeout from the previous
+event will be canceled.
+```html
+<textarea>Type something here...</textarea> 
+<script>
+let textarea = document.querySelector("textarea");
+let timeout;
+textarea.addEventListener("input", () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => console.log("Typed!"), 500); 
+});
+</script>
+``` 
+Giving an undefined value to `clearTimeout` or calling it on a timeout that has already fired has no effect.
 
 
 
