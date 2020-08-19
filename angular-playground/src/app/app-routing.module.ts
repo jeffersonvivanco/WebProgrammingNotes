@@ -15,7 +15,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    enableTracing: true,
+    enableTracing: false,
     anchorScrolling: 'enabled',
     scrollPositionRestoration: 'enabled',
     onSameUrlNavigation: 'reload',
