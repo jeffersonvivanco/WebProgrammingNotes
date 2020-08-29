@@ -292,6 +292,20 @@ and then the component. If you define the component before the service, you get 
 possible to define the component first with the help of the `forwardRef()` method. You can also use forward references
 to break circular dependencies.
 
+#### Forward references in Angular
+```typescript
+class AppComponent {
+  name: string;
+
+  constructor(@Inject(forwardRef(() => NameService)) nameService) {
+    this.name = nameService.getName();
+  }
+}
+```
+What `forwardRef` does is, it takes a function as a parameter that returns a class. And because this function isn't
+immediately called but instead is called *after* `NameService` is declared it is safe to return `NameService` from it.
+In other words: At this point where `() => NameService` runs `NameService` isn't undefined anymore.
+
 #### Create a service class
 `ng g s service_name`
 
