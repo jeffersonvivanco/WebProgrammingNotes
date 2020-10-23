@@ -268,7 +268,9 @@ There are 3 kinds of directives in Angular:
      selector: '[appHighlight]'
    })
    export class HighlightDirective {
-     constructor() { }
+     constructor(el: ElementRef) {
+       el.nativeElement.style.backgroundColor = 'yellow';
+     }
    }
    ```
    The `@Directive` decorator's lone configuration property specifies the directive's CSS attribute selector, `[appHighlight]`.
@@ -276,7 +278,77 @@ There are 3 kinds of directives in Angular:
    an attribute named `appHighlight` and applies the logic of this directive to that element. The *attribute selector*
    pattern explains the name of this kind of directive.
    
-   
+   You use the `ElementRef` in the directive's constructor to inject a reference to the host DOM element, the element
+   to which you applied `appHighlight`. `ElementRef` grants direct access to the host DOM element through its `nativeElement`
+   property.
+
+#### Apply the attribute directive
+`<p appHighlight>Highlight me!</p>`
+
+To summarize, Angular found the `appHighlight` attribute on the **host** `<p>` element. It created an instance of the
+`HighlightDirective` class and injected a reference to the `<p>` element into the directive's constructor which sets
+the `<p>` element's background style to yellow.
+
+
+#### Respond to user-initiated events
+```typescript
+@HostListener('mouseenter') onMouseEnter() {
+  this.highlight('yellow');
+}
+
+@HostListener('mouseleave') onMouseLeave() {
+  this.highlight(null);
+}
+
+private highlight(color: string) {
+  this.el.nativeElement.style.backgroundColor = color;
+}
+```
+
+The `@HostListener` decorator lets you subscribe to events of the DOM element that hosts an attribute directive, the
+`<p>` in this case.
+
+Of course you could reach into the DOM with standard JS and attach event listeners manually. There are at least 3 problems
+with that approach:
+
+1. You have to write the listeners correctly.
+2. The code must detach the listener when the directive is destroyed to avoid memory leaks.
+3. Talking to DOM API directly isn't a best practice.
+
+#### Pass values into the directive with an `@Input` data binding
+
+### Structural directives
+Structural directives are responsible for HTML layout. They shape or reshape the DOM's structure, typically by adding,
+removing, or manipulating elements. As with other directives, you apply a structural directive to a host element. The
+directive then does whatever it's supposed to do with the host element and its descendants.
+
+Structural directives are easy to recognize. An `*` precedes the directive attribute name like `<div *ngIf="hero" class="name">{{hero.name}}</div>`.
+
+The `*` is a convenience notation and the string is a *microsyntax* rather than the usual template expression. Angular desugars
+this notation into a marked-up `<ng-template>` that surrounds the host element and its descendants. Each structural directive
+does something different with that template.
+
+#### Directive spelling
+A directive class is spelled in *UpperCamelCase*(NgIf). A directive's *attribute name* is spelled in *lowerCamelCase*(ngIf).
+You can apply many *attribute* directives to one host element. You can only apply one *structural* directive to a host
+element.
+
+#### The `(*)` prefix
+The asterisk is "synthetic sugar" for something a bit more complicated. Internally, Angular translates the `*ngIf` attribute
+into a `<ng-template>` element, wrapped around the host element like this
+```angular2html
+<ng-template [ngIf]="hero">
+  <div class="name">{{hero.name}}</div>
+</ng-template>
+``` 
+
+The first form is not actually rendered, only the finished product ends up in the DOM.
+![actually rendered](./assets/finishedProduct.png "actually rendererd")
+
+Angular consumed the `<ng-template>` content during its actual rendering and replaced the `<ng-template>` with a diagnostic
+comment. The `NgFor` and `NgSwitch`... directives follow the same pattern. 
+
+
 ### Dynamic Components
 
 ## Dependency Injection
