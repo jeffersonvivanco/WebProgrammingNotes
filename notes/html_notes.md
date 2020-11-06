@@ -16,7 +16,24 @@ read in the MDN docs and other blogs and articles.
       phone number, social media handle, geographic coordinates, and so forth. The `<address>` element should include the
       name of the person, people, or organization to which the contact information refers. `<address>` can be used in a
       variety of contexts, such as providing a business's contact information in the page header, or indicating the author
-      of an article by including an `<address>` within `<article>`.  
+      of an article by including an `<address>` within `<article>`.
+  * `<video>`
+    * This elements embeds a media player which supports video playback into the document. You can use `<video>` for audio
+      content as well, but the `<audio>` element may provide a more appropriate user experience.
+    * ex:
+ 
+    ```html
+    <video controls width="250">
+      <source src="/media/cc0-videos/flower.webm" type="video/webm">
+      <source src="/media/cc0-videos/flower.mp4" type="video/mp4">
+      Sorry, your browser doesn't support embedded videos.
+    </video>
+    ```
+    * attributes
+      * `autoplay`
+      * `buffered` - an attribute you can read to determine the time ranges of the buffered media. This attribute contains
+        a `TimeRanges` object.
+      * 
 * HTML Events
   * `load`
     * fires after all sources (css) have been loaded which could not be the case with `DOMContentLoaded`
