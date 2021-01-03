@@ -19,8 +19,9 @@ const routes: Routes = [
     anchorScrolling: 'enabled',
     scrollPositionRestoration: 'enabled',
     onSameUrlNavigation: 'reload',
-    scrollOffset: [0, 64]
-  })],
+    scrollOffset: [0, 64],
+    relativeLinkResolution: 'legacy'
+})],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
