@@ -5,7 +5,7 @@
     <title>Scroll Into View</title>
     <style>
         .container {
-            height: 400px;
+            height: 1000px;
             display: grid;
             padding: 10px;
             background-color: #cccccc;
@@ -23,9 +23,9 @@
 <body>
 <h1>scrollTo / scrollInto</h1>
 <nav>
-    <span onclick="goTo('about')">About</span>
-    <span onclick="goTo('contact')">Contact</span>
-    <span onclick="goTo('hours')">Hours</span>
+    <span onclick="goToId2('about')">About</span>
+    <span onclick="goToId2('contact')">Contact</span>
+    <span onclick="goToId2('hours')">Hours</span>
 </nav>
 <section class="container">
     <article id="about">
@@ -39,10 +39,26 @@
     </article>
 </section>
 <script>
-    function goTo(id) {
+  function goTo(id) {
       const container = document.querySelector('.container');
       const target = document.getElementById(id);
       container.scrollTo({left: 0, top: target.offsetTop - container.offsetTop, behavior: 'smooth'});
+    }
+    function goToId2(id) {
+      const target = document.getElementById(id);
+      /*
+      scrollIntoView
+      either constructor
+      * alignToTop - boolean
+      * scrollIntoViewOptions - {}
+        * behavior - defines the transition animation; auto | smooth
+        * block - defines vertical alignment; start | center | end | nearest
+        * inline - defines horizontal alignment; start | center | end | nearest
+       */
+      target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      setTimeout(() => {
+        document.body.scrollIntoView({behavior: 'auto', block: 'start'});
+      }, 50)
     }
 </script>
 </body>
