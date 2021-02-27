@@ -685,7 +685,7 @@ successfully using this idea. Typically, the available interface is described in
 It is also common to put an underscore char `_` at the start of property names to indicate that
 those properties are private.
 
-Seperating interface from implementation is a great idea. It is usually called *encapsulation*.
+Separating interface from implementation is a great idea. It is usually called *encapsulation*.
 
 #### Methods
 Methods are nothing more than properties that hold function values. Ex:
@@ -841,9 +841,45 @@ Sometimes you want to attach some properties directly to your constructor functi
 methods won't have access to a class instance but can, for example, be used to provide additional ways to create instances.
 Inside a class declaration, methods that have `static` written before their name are stored on the constructor.
 
+#### Inheritance
+The new class inherits properties and behavior from the old class.
+```javascript
+class SymmerticMatrix extends Matrix {
+  constructor(size, element = (x, y) => undefined) {
+    super(size, size, (x, y) => {
+      if (x < y) return element(y, x);
+      else return element(x, y);
+    })
+  }
+  set(x, y, value) {
+    super(x, y, value);
+    if (x != y) {
+      super.set(y, x, value);
+    }
+  }
+}
+```
+The use of the word `extends` indicates that this class shouldn't be directly based on the default `Object` prototype but
+on some other class. This is called the *superclass*. The derived class is the *subclass*.
+
+Inheritance allows us to build slightly different data types from existing data types with relatively little work. It is
+a fundamental part of object-oriented tradition, alongside encapsulation and polymorphism. But while the latter 2 are now
+generally regarded as wonderful ideas, inheritance is more controversial. Whereas encapsulation and polymorphism can be
+used to *separate* pieces of code from each other, reducing the tangleness of the overall program, inheritance fundamentally
+ties classes together, creating more tangle. When inheriting from a class, you usually have to know more about how it
+works than when simply using it. Inheritance can be a useful tool, but it shouldn't be the first tool you reach for,
+and you probably shouldn't actively go looking for opportunities to construct class hierarchies (family trees of classes).
+
+#### The `instanceof` operator
+It is occasionally useful to know whether an object was derived from a specific class. For this, JS provides a binary
+operator called `instanceof`. ex: `console.log(new SymmetricMatrix instanceof SymmetricMatrix) // true`. The operator will see
+through inherited types, so a `SymmetricMatrix` is an instance of `Matrix`. The operator can also be applied to standard
+constructors like `Array`. Almost every object is an instance of `Object`.
+
+
 ### Bugs and Errors
 
-**Exceptions**
+#### Exceptions
 
 The `throw` keyword is used to raise an exception. Catching one is done by wrapping a piece of code in a `try` block, 
 followed by the keyword `catch`. Ex:
@@ -863,7 +899,7 @@ environments instances of this constructor also gather information about the cal
 was created, a so-called *stack trace*. This information is stored in the `stack` property and can be helpful when trying
 to debug a problem: it tells us the function where the problem occurred and which functions made the failing call.
 
-**Cleaning up after exceptions**
+#### Cleaning up after exceptions
 
 The effect of an exception is another kind of control flow. Every action that might cause an exception, which is pretty
 much every function call and property access, might cause control to suddenly leave your code. This means when code has
@@ -871,7 +907,7 @@ several side effects, even if its "regular" control flow looks like they'll alwa
 some of them from taking place. Even functions that don't look like they will throw an exception might do so in exceptional
 circumstances or when they contain a programmer mistake.
 
-One way to addess this is to use fewer side effects. Again, a programming style that computes new values instead of
+One way to address this is to use fewer side effects. Again, a programming style that computes new values instead of
 changing existing data helps. If a piece of code stops running in the middle of creating a new value, no one ever sees
 the half-finished value, and there is no problem.
 
@@ -894,7 +930,7 @@ bother, and because exceptions are typically reserved for exceptional circumstan
 it is never even noticed. Whether that is a good thing or a really bad thing depends on how much damage the software will
 do when it fails.
 
-**Selective catching**
+#### Selective catching
 
 When an exception makes it all the way to the bottom of the stack without being caught, it gets handled by the environment.
 What this means differs between environments. In browsers, a description of the error typically gets written to the JS
@@ -905,7 +941,49 @@ For programmer mistakes, just letting the error go through is often the best you
 reasonable way to signal a broken program, and the JS console will, on modern browsers, provide you with some information
 about which function calls were on the stack when the problem occurred.
 
-*For problems that are expected to happen during routine use, crashing with an unhandled exception is a terribly strategy.*
+*For problems that are expected to happen during routine use, crashing with an unhandled exception is a terrible strategy.*
+
+Invalid uses of the language, such as referencing a nonexistent binding, looking up a property on `null`, or calling
+something that's not a function, will also result in exceptions being raised. Such exceptions can also be caught.
+
+As a general rule, don't blanket-catch exceptions unless it is for the purpose of "routing" them somewhere--for example,
+over the network to tell another system that our program crashed. And even then, think carefully about how you might be
+hiding information.
+
+So we want to catch a specific kind of exception. We can do this by checking in the `catch` block whether the exception
+we got is the one we are interested in and rethrowing it otherwise. We do this by defining a new type of `error` and use
+`instanceof` to identify it.
+
+```javascript
+class InputError extends Error {}
+// checking for error
+try {
+  // ...
+}catch (e) {
+  if (e instanceof InputError) {
+    // ...
+  } else {
+    throw e;
+  }
+}
+```
+
+#### Assertions
+Assertions are checks inside a program that verify that something is the way it is supposed to be. They are used not to
+handle situations that can come up in normal operation but to find programmer mistakes. If for ex, `firstElement` is
+described as a function that should never be called on empty arrays, we might write it like this:
+```javascript
+function firstElement(array) {
+  if (array.length === 0) {
+    throw new Error('firstElement called with []');
+  }
+  return array[0];
+}
+```
+Now instead of silently returning undefined, this will loudly blow up your program as soon as you misuse it. This makes
+it less likely for such mistakes to go unnoticed and easier to find their cause when they occur. It's not recommended to
+write assertions for every possible kind of bad input. That'd be a lot of work and would lead to very noisy code. You'll
+want to reserve them for mistakes that are easy to make (or that you find yourself making).
 
 ### Handling events
 #### Debouncing
