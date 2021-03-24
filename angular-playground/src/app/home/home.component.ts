@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
+  nums = new Set([1, 1, 2, 3, 4, 5]);
   constructor() { }
 
   ngOnInit(): void {}

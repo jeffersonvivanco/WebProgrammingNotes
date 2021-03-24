@@ -62,7 +62,8 @@
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "angular-playground:build"
+            "browserTarget": "angular-playground:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

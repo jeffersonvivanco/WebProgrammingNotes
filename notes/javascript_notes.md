@@ -661,6 +661,53 @@ assignment, enumeration, function invocations, etc.). ===> Look at `programming_
   * `Object.getPrototypeOf()` - returns the `prototype` of the specified object
   * `Object.assign()` - copies the values of all enumerable own properties from one or more source objects
     to a target object.
+    
+## Control flow
+### `switch`
+```javascript
+const expr = 'Papayas';
+switch (expr) {
+  case 'Oranges':
+    console.log('Oranges are $0.59 a pound.');
+    break;
+  case 'Mangoes':
+  case 'Papayas':
+    console.log('Mangoes and papayas are $2.79 a pound.');
+    break;
+  default:
+    console.log(`Sorry, we are out of ${expr}.`);
+}
+```
+#### Block-scope variables within `switch` statements
+```javascript
+const action = 'say_hello';
+switch (action) {
+  case "say_hello": {
+    let message = 'hello';
+    console.log(message);
+    break;
+  }
+  case 'say_hi': {
+    let message = 'hi';
+    console.log(message);
+    break;
+  }
+  default: {
+    console.log('empty action received');
+    break;
+  }
+}
+```
+    
+### Set
+The `Set` object lets you store unique values of any type, whether primitive values or
+object references. `Set` objects are collections of values. You can iterate through
+the elements of a set in insertion order.
+
+#### Iterating Sets
+```javascript
+for (let item of mySet1) console.log(item);
+```
   
 
 ## Eloquent Javascript

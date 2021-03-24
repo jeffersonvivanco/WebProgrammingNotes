@@ -726,6 +726,43 @@ router assumed that your route specification targeted the unnamed primary outlet
 to a named outlet has revealed a router feature: you can target multiple outlets with multiple routes in the same
 `RouterLink` directive.
 
+## HTTP Client
+### Requesting data from a server
+#### `get()`
+This method takes 2 arguments; the endpoint URL from which to fetch, and an *options*
+object that you can use to configure the request.
+```text
+options: {
+  headers?: HttpHeaders | {[header: string]: string | string[]},
+  observe?: 'body' | 'events' | 'response', // specifies how much of the response to return
+  params?: HttpParams | {[param: string]: string | string[]}, // use to configure a request with HTTP URL parameters
+  reportProgress?: boolean, // use to listen for progress events when transferring large amounts of data
+  responseType?: 'arraybuffer' | 'blob' | 'json' | 'text', // specifies the format in which to return data
+  withCredentials?: boolean
+}
+```
+#### Requesting a typed response
+...
+
+### Handling request errors
+If the requesst fails on the server, `HttpClient` returns an *error* object instead of a successful response. The same
+service that performs your server's transactions should also perform error inspection, interpretation, and resolution.
+
+#### Getting error details
+An app should give the user useful feedback when data access fails. A raw error object is not particularly useful
+as feedback. In addition to detecting that an error has occurred, you need to get error details and use those details
+to compose a user-friendly response.
+
+2 types of errors can occur
+
+* the server backend might reject the request, returning an HTTP response with a status code such as 404
+  or 500. These are error *responses*.
+* something could go wrong on the client-side such as a network error that prevents the request from completing successfully
+  or an exception thrown in an RxJS operator. These errors produce JS `ErrorEvent` objects.
+  
+`HttpClient` captures both kinds of errors in its `HttpErrorResponse`. You can inspect the response to identify
+the error's cause. Look at *my-http.component.ts*
+
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
   * `ng add @angular/elements`

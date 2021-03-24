@@ -1,5 +1,21 @@
 # Typescript Notes
 
+## Interfaces
+### `readonly` vs `const`
+The easiest way to remember whether to use `const` or `readonly` is to ask whether you are using it as on a
+variable or a property. Variables use `const` whereas properties use `readonly`.
+
+### Excess property checks
+Object literals get special treatment and undergo *excess property checking* when assigning them to other
+variables, or passing them as arguments. If an object literal has any properties that the "target type" doesn't
+have, you'll get an error.
+
+Getting around these checks is actually really simple. The easiest method is to use a type assertion:
+`let mySquare = createSquare({width: 100, opacity: 0.5} as SquareConfig);`
+
+However, a better approach might be to add a string index signature if you're sure
+
+
 ## Classes
 
 ### `public`, `private`, and `protected` modifiers

@@ -1,11 +1,11 @@
 interface Student{
     fullname: string;
-    age: number;
+    age?: number; // optional property
     [propName: string]: any;
 }
 
 let jeff: Student = {
-    fullname: 'Jefferson Vivanco',
+    fullname: '',
     age: 23,
     university: 'NYU'
 }
@@ -21,8 +21,10 @@ mySearch = function(source: string, subString: string ){
 }
 
 // indexable types
+// TS comes with an ReadonlyArray<T> type that is the same as Array<T> with all mutating
+// methods removed, so you can make sure you don't change the arrays after creation
 interface ReadonlyStringArray{
-    readonly [index: number]: string;
+    readonly [index: number]: string; // property is only modifiable when object is created
 }
 let myArray: ReadonlyStringArray = ['Alice', 'Bob'];
 
@@ -42,3 +44,9 @@ function getCounter(): Counter{
 }
 let c = getCounter();
 c(10);
+
+let a: number[] = [1, 2, 3, 4];
+let ro: ReadonlyArray<number> = a;
+// a = ro; // the type 'readonly number[]' is 'readonly' and cannot be assigned to the mutable type 'number[]'
+// you can override with a type assertion though
+a = ro as number[];

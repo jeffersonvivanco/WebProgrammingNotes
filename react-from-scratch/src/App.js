@@ -8,6 +8,8 @@ import MyStateAndLifecycle from "./MyStateAndLifecycle";
 import MyHandlingEvents from "./MyHandlingEvents";
 import MyForms from "./MyForms";
 import MyRefsAndDom from "./MyRefsAndDom";
+import {MyConditionalRendering} from "./MyConditionalRendering";
+import {MyListsAndKeys} from "./MyListsAndKeys";
 
 class App extends Component {
   render() {
@@ -18,6 +20,8 @@ class App extends Component {
         <MyComponentsAndProps name={'Jeff'}/>
         <MyStateAndLifecycle/>
         <MyHandlingEvents/>
+        <MyConditionalRendering />
+        <MyListsAndKeys />
         <MyForms greeting={'good night'}/>
         <MyRefsAndDom />
       </section>
