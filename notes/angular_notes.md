@@ -763,6 +763,61 @@ to compose a user-friendly response.
 `HttpClient` captures both kinds of errors in its `HttpErrorResponse`. You can inspect the response to identify
 the error's cause. Look at *my-http.component.ts*
 
+## Testing
+The Angular CLI downloads and installs everything you need to test an Angular Application with
+the Jasmine Test framework. The `ng test` command builds the app in watch mode, and launches the Karma test runner.
+
+### Configuration
+The CLI takes care of the Jasmine and Karma configuration for you. You can fine-tune many options by editing
+the *karma.conf.js* in the root folder of the project and the *test.ts* files in the *src/* folder. The
+*karma.conf.js* file is a partial Karma configuration file. The CLI constructs the full runtime configuration
+in memory, based on application structure specified in the *angular.json* file, supplemented by *karma.conf.js*.
+
+#### Place your spec files in a test folder
+Application integration specs can test the interactions of multiple parts spread across folders and modules.
+They don't really belong to any part in particular, so they don't have a natural home next to any one file.
+Its often better to create an appropriate folder for them in the *tests* directory. Of course specs that test
+the test helpers belong in the *test* folder, next to their corresponding helper files.
+
+### Code coverage
+To generate a coverage report run the following command in the root of your project
+`ng test --no-watch --code-coverage`. When the tests are complete, the command creates a new */coverage*
+folder in the project. Open the *index.html* file to see a report with your source code and code coverage values.
+
+If you want to create code-coverage reports every time you test, you can set the following option in the CLI config file
+*angular.json*.
+```json
+{
+  "test": {
+    "options": {
+      "codeCoverage": true
+    }
+  }
+}
+```
+#### Code Coverage enforcement
+For example ,suppose you want the code base to have a minimum of 80% code coverage. To enable this, open *karma.conf.js*
+and add the `check` property in the `coverageReporter` key:
+
+```javascript
+coverageReporter: {
+  dir: require('path').join(__dirname, './coverage/<project-name>'),
+    subdir: '.',
+    reporters: [
+    { type: 'html' },
+    { type: 'text-summary' }
+  ],
+    check: {
+    global: {
+      statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80
+    }
+  }
+}
+```
+
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
   * `ng add @angular/elements`
