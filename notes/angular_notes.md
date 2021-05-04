@@ -818,6 +818,570 @@ coverageReporter: {
 }
 ```
 
+### Testing services
+Prefer spies as they are usually the easiest way to mock services.
+
+#### Testing services with `TestBed`
+Your app relies on Angular DI to create services. When a service has a dependent service, DI finds or creates that dependent
+service. And if that dependent service has its own dependencies, DI finds-or-creates them as well.
+
+As a service consumer, you don't worry about any of this. You don't worry about the order of constructor arguments or how
+they're treated. As a service tester, you must at least think about the first level of service dependencies but you can let
+Angular DI do the service creation and deal with constructor argument order when you use the `TestBed` testing utility to
+provide and create services.
+
+##### Angular `TestBed`
+The `TestBed` is the most important of the Angular testing utilities. The `TestBed` creates a dynamically-constructed
+Angular *test* module that emulates an Angular `@NgModule`.
+
+The `TestBed.configureTestingModule(metadata)` takes a metadata object that can have most of the properties of an `@NgModule`.
+
+To test a service, you set the `providers` metadata property with an array of services that you'll test or mock.
+
+```typescript
+let service: ValueService;
+
+beforeEach(() => {
+    TestBed.configureTestingModule({providers: [ValueService]})
+});
+```
+
+Then inject it inside a test by calling `TestBed.inject()` with the service class as the argument. Or inside the `beforeEach()`
+if you prefer to inject the service as part of your setup.
+
+```typescript
+it('should use ValueService', function () {
+    service = TestBed.inject(ValueService);
+    expect(service.getValue()).toBe('real value');
+}); 
+```
+
+When testing a service with a dependency, provide the mock in the `providers` array. In the following example, the mock
+is a spy object.
+
+```typescript
+import {TestBed} from "@angular/core/testing";
+
+let masterService: MasterService;
+let valueServiceSpy: jasmine.SpyObj<ValueService>;
+
+beforeEach(() => {
+    const spy = jasmine.createSpyObj('ValueService', ['getValue']);
+    TestBed.configureTestingModule({
+        providers: [MasterService, {provide: ValueService, useValue: spy}]
+    });
+    masterService = TestBed.inject(MasterService);
+    valueServiceSpy = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>;
+});
+```
+
+#### Testing without `beforeEach()`
+There's another school of testing that never calls `beforeEach()` and prefers to create classes explicitly rather than
+use the `TestBed`. Begin by putting re-usable, preparatory code in a *setup* function instead of `beforeEach()`.
+
+```typescript
+function setup() {
+    const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getValue']);
+    const stubValue = 'stub value';
+    const masterService = new MasterService(valueServiceSpy);
+    
+    valueServiceSpy.getValue.and.returnValue(stubValue);
+    return {masterService, stubValue, valueServiceSpy};
+}
+```
+
+You don't define semi-global variables in the body of the `describe()`. Then each test invokes `setup()` in its first
+line, before continuing with steps that manipulate the test subject and assert expectations.
+
+#### Testing HTTP services
+You can test a data service with an injected `HTTPClient` spy as you would test any service with a dependency.
+
+```typescript
+let httpClientSpy: { get: jasmine.Spy };
+let heroService: HeroService;
+
+beforeEach(() => {
+  // TODO: spy on other methods too
+  httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+  heroService = new HeroService(httpClientSpy as any);
+});
+
+it('should return expected heroes (HttpClient called once)', () => {
+  const expectedHeroes: Hero[] =
+    [{ id: 1, name: 'A' }, { id: 2, name: 'B' }];
+
+  httpClientSpy.get.and.returnValue(asyncData(expectedHeroes));
+
+  heroService.getHeroes().subscribe(
+    heroes => expect(heroes).toEqual(expectedHeroes, 'expected heroes'),
+    fail
+  );
+  expect(httpClientSpy.get.calls.count()).toBe(1, 'one call');
+});
+
+it('should return an error when the server returns a 404', () => {
+  const errorResponse = new HttpErrorResponse({
+    error: 'test 404 error',
+    status: 404, statusText: 'Not Found'
+  });
+
+  httpClientSpy.get.and.returnValue(asyncError(errorResponse));
+
+  heroService.getHeroes().subscribe(
+    heroes => fail('expected an error, not heroes'),
+    error  => expect(error.message).toContain('test 404 error')
+  );
+});
+```
+
+#### Testing HTTP Requests
+As for any external dependency, you must mock the HTTP backend so your tests can simulate interaction with a remote server.
+The `@angular/common/http/testing` library makes it straightforward to set up such mocking.
+
+Angular's HTTP testing library is designed for a pattern of testing in which the app executes code and makes requests first.
+The test then expects that certain requests have or have not been made, performs assertions against those requests, and finally
+provides responses by "flushing" each expected request.
+
+At the end, tests can verify that the app has made no unexpected requests.
+
+##### Setup for testing
+To begin testing calls to `HttpClient`, import the `HttpClientTestingModule` and the mocking controller `HttpTestingController`,
+along with the other symbols your tests require. Then add the `HttpClientTestingModule` to the TestBed and continue with the
+setup of the *service-under-test*.
+
+```typescript
+describe('HttpClient testing', () => {
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ HttpClientTestingModule ]
+    });
+
+    // Inject the http service and test controller for each test
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
+  });
+  /// Tests begin ///
+});
+```
+
+##### Expecting and answering requests
+```typescript
+it('can test HttpClient.get', () => {
+  const testData: Data = {name: 'Test Data'};
+
+  // Make an HTTP GET request
+  httpClient.get<Data>(testUrl)
+    .subscribe(data =>
+      // When observable resolves, result should match test data
+      expect(data).toEqual(testData)
+    );
+
+  // The following `expectOne()` will match the request's URL.
+  // If no requests or multiple requests matched that URL
+  // `expectOne()` would throw.
+  const req = httpTestingController.expectOne('/data');
+
+  // Assert that the request is a GET.
+  expect(req.request.method).toEqual('GET');
+
+  // Respond with mock data, causing Observable to resolve.
+  // Subscribe callback asserts that correct data was returned.
+  req.flush(testData);
+
+  // Finally, assert that there are no outstanding requests.
+  httpTestingController.verify();
+});
+```
+
+The last step, verifying that no requests remain outstanding, is common enough for you to move it into an `afterEach()` step:
+
+```typescript
+afterEach(() => {
+  // After every test, assert that there are no more pending requests.
+  httpTestingController.verify();
+});
+```
+
+###### Custom request expectations
+```typescript
+// Expect one request with an authorization header
+const req = httpTestingController.expectOne(
+  request => request.headers.has('Authorization')
+);
+```
+
+###### Handling more than 1 request
+If you need to respond to duplicate requests in your test, use the `match()` api instead of `expectOne()`. It takes the
+same arguments but returns an array of matching requests. Once returned, these requests are removed from future matching
+and you are responsible for flushing them and verifying them.
+
+```typescript
+// get all pending requests that match the given URL
+const requests = httpTestingController.match(testUrl);
+expect(requests.length).toEqual(3);
+
+// Respond to each request with different results
+requests[0].flush([]);
+requests[1].flush([testData[0]]);
+requests[2].flush(testData);
+```
+
+###### Testing for errors
+Call `request.flush()` with an error message, as seen in the following example.
+
+```typescript
+it('can test for 404 error', () => {
+  const emsg = 'deliberate 404 error';
+
+  httpClient.get<Data[]>(testUrl).subscribe(
+    data => fail('should have failed with the 404 error'),
+    (error: HttpErrorResponse) => {
+      expect(error.status).toEqual(404, 'status');
+      expect(error.error).toEqual(emsg, 'message');
+    }
+  );
+
+  const req = httpTestingController.expectOne(testUrl);
+
+  // Respond with mock error
+  req.flush(emsg, { status: 404, statusText: 'Not Found' });
+});
+```
+
+Alternatively, you can call `request.error()` with an error event.
+
+```typescript
+it('can test for network error', () => {
+  const emsg = 'simulated network error';
+
+  httpClient.get<Data[]>(testUrl).subscribe(
+    data => fail('should have failed with the network error'),
+    (error: HttpErrorResponse) => {
+      expect(error.error.message).toEqual(emsg, 'message');
+    }
+  );
+
+  const req = httpTestingController.expectOne(testUrl);
+
+  // Create mock ErrorEvent, raised when something goes wrong at the network level.
+  // Connection timeout, DNS error, offline, etc
+  const mockError = new ErrorEvent('Network error', {
+    message: emsg,
+  });
+
+  // Respond with mock error
+  req.error(mockError);
+});
+```
+
+### Basics of testing components
+
+#### Component class testing
+Test a component class on its own as you would test a service class. Component class testing should be kept very clean
+and simple. It should only test a single unit.
+
+To test a component with a dependency, use angular `TestBed`
+
+```typescript
+beforeEach(() => {
+  TestBed.configureTestingModule({
+    // provide the component-under-test and dependent service
+    providers: [
+      WelcomeComponent,
+      { provide: UserService, useClass: MockUserService }
+    ]
+  });
+  // inject both the component and the dependent service.
+  comp = TestBed.inject(WelcomeComponent);
+  userService = TestBed.inject(UserService);
+});
+```
+**Remember to call angular lifecycle hooks like angular does when testing components.**
+
+#### Component DOM testing
+Testing the component class is as easy as testing a service. But a component is more than just its class. A component
+interacts with the DOM and with other components. The *class-only* tests can tell you about class behavior. They cannot
+tell you if the component is going to render properly, respond to user input and gestures, or integrate with its parent
+and child components.
+
+Many components have complex interactions with the DOM elements described in their templates, causing HTML to appear
+and disappear as the component state changes. To test these changes you have to create the DOM elements associated
+with the components, examine the DOM to confirm that component state displays properly at the appropriate times, and
+you must simulate user interaction with the screen to determine whether those interactions cause the component to behave
+as expected.
+
+```typescript
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+
+import { BannerComponent } from './banner.component';
+
+describe('BannerComponent', () => {
+  let component: BannerComponent;
+  let fixture: ComponentFixture<BannerComponent>;
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({declarations: [BannerComponent]}).compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(BannerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeDefined();
+  });
+});
+```
+
+> Because `compileComponents` is asynchronous, it uses the `waitForAsync` utility function imported from
+> `@angular/core/testing`.
+
+##### `createComponent()`
+`TestBed.createComponent()` creates an instance of the `BannerComponent`, adds a corresponding element to the
+test-runner DOM, and returns a `ComponentFixture`.
+
+> Do not re-configure `TestBed` after calling `createComponent`. The `createComponent()` freezes the current
+> `TestBed` definition, closing it to further configuration. You cannot call any more `TestBed` configuration
+> methods, not `configureTestingModule()`, nor `get()`, nor any of the `override...` methods. If you try,
+> `TestBed` throws an error.
+
+##### *ComponentFixture*
+The ComponentFixture is a test harness for interacting with the created component and its corresponding element.
+Access the component instance through the fixture and confirm it exists with a Jasmine expectation:
+```typescript
+const component = fixture.componentInstance;
+expect(component).toBeDefined();
+```
+
+##### `nativeElement`
+A test that gets the component's element from `fixture.nativeElement` and looks for the expected text.
+
+```typescript
+it('should contain "banner works!"', () => {
+  const bannerElement: HTMLElement = fixture.nativeElement;
+  expect(bannerElement.textContent).toContain('banner works!');
+});
+```
+
+The value of `ComponentFixture.nativeElement` has the `any` type. Later you'll encounter the `DebugElement.nativeElement`
+and it too has the `any` type.
+
+Angular can't know at compile time what kind of HTML element the `nativeElement` is or if it even is an HTML element. The
+app might be running on a *non-browser platform*, such as the server or a Web Worker, where the element may have a diminished
+API or not exist at all. The tests in this guide are designed to run in a browser so a `nativeElement` value will always
+be an `HTMLElement` or one of its derived classes.
+
+Knowing that it is an `HTMLElement` of some sort, you can use the standard HTML `querySelector` to dive deeper into the
+element tree. Here's another test that calls `HTMLElement.querySelector` to get the paragraph element and look for the
+banner text:
+
+```typescript
+it('should have <p> with "banner works!"', () => {
+  const bannerElement: HTMLElement = fixture.nativeElement;
+  const p = bannerElement.querySelector('p');
+  expect(p.textContent).toEqual('banner works!');
+});
+```
+
+##### `DebugElement`
+The Angular *fixture* provides the component's element directly through the `fixture.nativeElement`. This is actually
+a convenience method, implemented as `fixture.debugElement.nativeElement`. The reason for this implementation is that
+the properties of the `nativeElement` depend upon the runtime environment. You could be running these tests on a *non-browser*
+platform that doesn't have a DOM or whose DOM-emulation doesn't support the full `HTMLElement` api.
+
+Angular relies on the `DebugElement` abstraction to work safely across all supported platforms. Instead of creating an HTML
+element tree, Angular creates a `DebugElement` tree that wraps the native elements for the runtime platform. The `nativeElement`
+property unwraps the `DebugElement` and returns the platform-specific element object.
+
+##### `By.css()`
+Although the tests in this guide all run in the browser, some apps might run on a different platform at least some of the
+time. For example, the component might render first on the server as part of a strategy to make the application launch
+faster on poorly connected devices. The server-side renderer might not support the full HTML element API.
+
+The `DebugElement` offers query methods that work for all supported platforms. These query methods take a *predicate*
+function that returns `true` when a node in the `DebugElement` tree matches the selection criteria.
+
+You create a *predicate* with the help of a `By` class.
+
+```typescript
+it('should find the <p> with fixture.debugElement.query(By.css)', () => {
+  const bannerDe: DebugElement = fixture.debugElement;
+  const paragraphDe = bannerDe.query(By.css('p'));
+  const p: HTMLElement = paragraphDe.nativeElement;
+  expect(p.textContent).toEqual('banner works!');
+});
+```
+
+* The `By.css()` static method selects `DebugElement` nodes with a standard CSS selector.
+* The query returns a `DebugElement` for the paragraph.
+* You must unwrap the result to get the paragraph element.
+
+### Component Testing scenarios
+
+#### Component binding
+
+##### `createComponent()` does not bind data
+Binding happens when angular performs change detection. In production, change detection kicks in automatically when
+Angular creates a component or the user enters a keystroke or an asynchronous activity (e.g., AJAX) completes.
+
+The `TestBed.createComponent` does not trigger change detection.
+
+##### `detectChanges()`
+You must tell the `TestBed` to perform data binding by calling `fixture.detectChanges()`.
+
+##### Automatic change detection
+Some testers prefer that the Angular test environment run change detection automatically. That's possible by configuring
+the `TestBed` with the `ComponentFixtureAutoDetect` provider.
+
+```typescript
+TestBed.configureTestingModule({
+  declarations: [ BannerComponent ],
+  providers: [
+    { provide: ComponentFixtureAutoDetect, useValue: true }
+  ]
+});
+```
+
+The `ComponentFixtureAutoDetect` service responds to *asynchronous activities* such as promise resolution, timers, and DOM
+events. But a direct synchronous update of the component property is invisible. The test must call `fixture.detectChanges()`
+manually to trigger another cycle of change detection.
+
+##### Change an input value with `dispatchEvent()`
+To simulate user input, you can find the input element and set its `value` property. You will call `fixture.detectChanges()`
+to trigger Angular's change detection. But there's an essential intermediate step. 
+
+Angular doesn't know that you set the input element's value property. It wont read that property until you raise the element's
+`input` event by calling `dispatchEvent()`. Then you call `detectChanges()`.
+
+```typescript
+it('should convert hero name to Title Case', () => {
+  // get the name's input and display elements from the DOM
+  const hostElement = fixture.nativeElement;
+  const nameInput: HTMLInputElement = hostElement.querySelector('input');
+  const nameDisplay: HTMLElement = hostElement.querySelector('span');
+
+  // simulate user entering a new name into the input box
+  nameInput.value = 'quick BROWN  fOx';
+
+  // Dispatch a DOM event so that Angular learns of input value change.
+  // In older browsers, such as IE, you might need a CustomEvent instead. See
+  // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+  nameInput.dispatchEvent(new Event('input'));
+
+  // Tell Angular to update the display binding through the title pipe
+  fixture.detectChanges();
+
+  expect(nameDisplay.textContent).toBe('Quick Brown  Fox');
+});
+```
+
+#### Component with async service
+
+##### Testing with a spy
+```typescript
+// Create a fake TwainService object with a `getQuote()` spy
+const twainService = jasmine.createSpyObj('TwainService', ['getQuote']);
+// Make the spy return a synchronous Observable with the test data
+getQuoteSpy = twainService.getQuote.and.returnValue(of(testQuote));
+```
+The spy is designed such that any call to `getQuote` receives an observable with a test quote. Unlike the real `getQuote()`,
+this spy bypasses the server and returns an observable whose value is available immediately. You can write many useful
+tests with this spy, even though its `Observable` is synchronous.
+
+##### Async test with *fakeAsync()*
+```typescript
+it('should display error when TwainService fails', fakeAsync(() => {
+     // tell spy to return an error observable
+     getQuoteSpy.and.returnValue(throwError('TwainService test failure'));
+
+     fixture.detectChanges();  // onInit()
+     // sync spy errors immediately after init
+
+     tick();  // flush the component's setTimeout()
+
+     fixture.detectChanges();  // update errorMessage within setTimeout()
+
+     expect(errorMessage()).toMatch(/test failure/, 'should display error');
+     expect(quoteEl.textContent).toBe('...', 'should show placeholder');
+   }));
+```
+
+The `fakeAsync()` enables a linear coding style by running the test body in a special `fakeAsync test zone`. The test
+body appears to be synchronous. There is no nested syntax (like a `Promise.then()`) to disrupt the flow of control.
+
+> Limitation: The `fakeAsync()` wont work if the test body makes an `XMLHttpRequest` (XHR) call. XHR calls within a test
+> are rare, but if you need to call XHR, see `waitForAsync()`.
+
+###### The `tick()` function
+You do have to call `tick()` to advance the (virtual) clock. Calling `tick()` simulates the passage of time until all
+pending asynchronous activities finish.
+
+The `tick()` accepts milliseconds and tickOptions as parameters, the millisecond (defaults to 0 if not provided) parameter
+represents how much the virtual clock advances. For example, if you have a `setTimeout(fn, 100)` in a `fakeAsync()` test,
+you need to use `tick(100)` to trigger the `fn` callback.
+
+The `tickOptions` is an optional parameter with a property called `processNewMacroTasksSynchronously` (defaults to true)
+that represents whether to invoke new generated macro tasks when ticking.
+
+The `tick()` can only be used with `fakeAsync()`.
+
+###### tickOptions
+In this example, we have a new macro task (nested setTimeout), by default, when we `tick`, the setTimeout outside and nested
+will both be triggered.
+
+```typescript
+it('should not run new macro task callback with delay after call tick with millis',
+   fakeAsync(() => {
+     function nestedTimer(cb: () => any): void {
+       setTimeout(() => setTimeout(() => cb()));
+     }
+     const callback = jasmine.createSpy('callback');
+     nestedTimer(callback);
+     expect(callback).not.toHaveBeenCalled();
+     tick(0, {processNewMacroTasksSynchronously: false});
+     // the nested timeout will not be triggered
+     expect(callback).not.toHaveBeenCalled();
+     tick(0);
+     expect(callback).toHaveBeenCalled();
+   }));
+```
+
+And in some case, we don't want to trigger the new macro task when ticking, we can use `tick(ms, {processNewMacroTasksSynchronously: false})`
+to not invoke new macro task.
+
+
+### Testing pipes
+You can test pipes without the angular testing utilities.
+
+A pipe class has 1 method, `transform`, that manipulates the input value into a transformed output value. The `transform`
+implementation rarely interacts with the DOM. Most pipes have no dependence on Angular other than the `@Pipe` metadata
+and an interface.
+
+Anything that uses a regular expression is worth testing thoroughly. Use simple Jasmine to explore the expected cases
+and the edge cases.
+
+```typescript
+describe('TitleCasePipe', () => {
+  // This pipe is a pure, stateless function so no need for BeforeEach
+  const pipe = new TitleCasePipe();
+
+  it('transforms "abc" to "Abc"', () => {
+    expect(pipe.transform('abc')).toBe('Abc');
+  });
+
+  it('transforms "abc def" to "Abc Def"', () => {
+    expect(pipe.transform('abc def')).toBe('Abc Def');
+  });
+
+  // ... more tests ...
+});
+```
+
 ## Angular Microfrontend
 * We will need a few dependencies to build and run Angular custom elements.
   * `ng add @angular/elements`

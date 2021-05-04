@@ -13,4 +13,8 @@ describe('HeroesService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should have heroes initialized to 3', function () {
+    expect(service.heroes.length).toBe(3);
+  });
 });

@@ -662,6 +662,23 @@ assignment, enumeration, function invocations, etc.). ===> Look at `programming_
   * `Object.assign()` - copies the values of all enumerable own properties from one or more source objects
     to a target object.
     
+### Set
+A `Set` object lets you store unique values of any type, whether primitive values or object references.
+
+* Constructor
+  `new Set()` or `new Set(iterable)`
+
+* Methods
+  * `add(value)`
+  * `clear()`
+  * `delete(value)`
+  * `has(value)`
+  
+* Iteration methods
+  * `keys()` - returns a new iterator object that yields the values for each element in the `Set` object in insertion order.
+  * `values()` - same as `keys()`
+  * `forEach(callbackFn[, thisArg])`
+
 ## Control flow
 ### `switch`
 ```javascript
@@ -923,6 +940,28 @@ operator called `instanceof`. ex: `console.log(new SymmetricMatrix instanceof Sy
 through inherited types, so a `SymmetricMatrix` is an instance of `Matrix`. The operator can also be applied to standard
 constructors like `Array`. Almost every object is an instance of `Object`.
 
+### Asynchronous programming
+
+#### Callbacks
+In a way, asychronicity is contagious. Any function that calls a function that works asynchronously must itself be
+asynchronous, using a callback or similar mechanism to deliver its result. Calling a callback is somewhat more involved
+and error-prone than simply returning a value, so needing to structure large parts of your program that way is not great.
+
+#### Promises
+A promise is an asynchronous action that may complete at some point and produce a value. It is able to notify anyone who
+is interested when its value is available. 
+
+The easiest way to create a promise is by calling `Promise.resolve`. This function ensures that the value you give it
+is wrapped in a promise. If it's already a promise, it is simply returned--otherwise, you get a new promise that immediately
+finishes with your value as its result.
+
+```javascript
+let fifteen = Promise.resolve(15);
+fifteen.then(value => console.log(`value is ${value}`));
+```
+
+To get the result of a promise, you can use its `then` method. This registers a callback function to be called when the
+promise resolves and 
 
 ### Bugs and Errors
 
