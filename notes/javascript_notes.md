@@ -661,9 +661,10 @@ assignment, enumeration, function invocations, etc.). ===> Look at `programming_
   * `Object.getPrototypeOf()` - returns the `prototype` of the specified object
   * `Object.assign()` - copies the values of all enumerable own properties from one or more source objects
     to a target object.
-    
+
 ### Set
 A `Set` object lets you store unique values of any type, whether primitive values or object references.
+`Set` objects are collections of values. You can iterate through the elements of a set in insertion order.
 
 * Constructor
   `new Set()` or `new Set(iterable)`
@@ -680,6 +681,7 @@ A `Set` object lets you store unique values of any type, whether primitive value
   * `forEach(callbackFn[, thisArg])`
 
 ## Control flow
+
 ### `switch`
 ```javascript
 const expr = 'Papayas';
@@ -715,17 +717,7 @@ switch (action) {
   }
 }
 ```
-    
-### Set
-The `Set` object lets you store unique values of any type, whether primitive values or
-object references. `Set` objects are collections of values. You can iterate through
-the elements of a set in insertion order.
 
-#### Iterating Sets
-```javascript
-for (let item of mySet1) console.log(item);
-```
-  
 
 ## Eloquent Javascript
 
@@ -961,8 +953,39 @@ fifteen.then(value => console.log(`value is ${value}`));
 ```
 
 To get the result of a promise, you can use its `then` method. This registers a callback function to be called when the
-promise resolves and 
+promise resolves and produces a value. You can add multiple callbacks to a single promise, and they will be called, even
+if you add them after the promise has already resolved (finished). But that's not all the `then` method does. It returns
+another promise, which resolves to the value that the handler function returns or, if that returns a promise, waits for that
+promise and then resolves to its result.
 
+##### `Promise()` constructor
+`new Promise(executor)`
+
+Parameters
+* `executor` - typically it works like this: The operation within `executor` is asynchronous and provides a callback. The
+  callback is defined within the `executor` code. The callback terminates by invoking `resolutionFunc`. The invocation of
+  `resolutionFunc` includes a `value` parameter. The value is passed back to the tethered `Promise` object. The `Promise`
+  object (asynchronously) invokes any `.then()` associated with it. The `value` received by `.then()` is passed to the
+  invocation of `handleFulfilled` as an input parameter.
+  
+  The `executor` might also include a `try{} catch()` block that invokes `rejectionFunc` upon error.
+
+  The promise object will become "resolved" when either of the functions `resolutionFunc` or `rejectionFunc` are invoked.
+  Note that if you call `resolutionFunc` or `rejectionFunc` and pass another Promise object as an argument, you can say that
+  it is "resolved", but still cannot be said to be "settled".
+  
+##### Collections of Promises
+When working with collections of promises running at the same time, the `Promise.all` function can be useful. It returns
+a promise that waits for all of the promises in the array to resolve and then resolves to an array of the values that these
+promises produced (in the same order as the original array). If any promise is rejected, the result of `Promise.all` is itself
+rejected.
+
+#### Async functions
+JS allows you to write pseudo-synchronous code to describe asynchronous computation. An `async` function is a function that
+implicitly returns a promise and that can, in its body, `await` other promises in a way that looks synchronous. Inside an
+`async` function, the word `await` can be put in front of an expression to wait for a promise to resolve and only then continue
+the execution of the function.
+  
 ### Bugs and Errors
 
 #### Exceptions

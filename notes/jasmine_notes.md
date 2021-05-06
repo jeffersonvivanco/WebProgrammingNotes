@@ -87,4 +87,12 @@ Calls to `beforeAll`, `afterAll`, `beforeEach`, `afterEach`, and `it` can take a
 called when the async work is complete.
 
 ## Spying on properties
-Properties are more complicated 
+Properties are more complicated than functions. In Jasmine, you can do anything with a property spy that you can do with
+a function spy, but you may need to use different syntax. 
+
+`spyOnProperty(someObject, 'myValue', 'get').and.returnValue(30);`
+
+`spyOnProperty(someObject, 'myValue', 'set').and.callThrough();`
+
+
+
