@@ -783,7 +783,7 @@ normalize.call({coords: [0, 2, 3], length: 5});
 If I had written the argument to `map` using the `function` keyword, the code wouldn't work.
 
 #### Prototypes
-In addition to their set properties, most objects also have also have a *prototype*. A prototype is
+In addition to their set properties, most objects also have a *prototype*. A prototype is
 another object that is used as a fallback source of properties. When an object gets a request for a
 property that it doesn't have, its prototype will be searched for the property, then the prototype's
 prototype, and so on.

@@ -14,6 +14,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HighlightDirective } from './highlight.directive';
 import {HttpClientModule} from '@angular/common/http';
 import { MyHttpComponent } from './my-http/my-http.component';
+import { MyComponentTemplateComponent } from './my-component-template/my-component-template.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { MyHttpComponent } from './my-http/my-http.component';
     AboutComponent,
     HighlightDirective,
     MyHttpComponent,
+    MyComponentTemplateComponent,
   ],
   imports: [
     BrowserModule,
