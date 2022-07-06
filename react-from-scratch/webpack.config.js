@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/index.js', // where app starts and where to start building our files
+  entry: ['regenerator-runtime/runtime.js', './src/index.js'], // where app starts and where to start building our files
   mode: 'production', // lets webpack know which mode we are working on
   /*
   the module object helps define how your exported js modules are transformed and

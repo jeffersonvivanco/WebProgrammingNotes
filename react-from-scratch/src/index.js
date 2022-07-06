@@ -13,6 +13,7 @@ class MyComponent extends HTMLElement {
   connectedCallback() {
     const div = document.createElement('div');
     console.log('attributes passed', this.getAttributeNames());
+    console.log('greeting in connectedCallback', JSON.parse(this.getAttribute('greeting')));
     this.appendChild(div);
   }
   render() {
@@ -21,7 +22,8 @@ class MyComponent extends HTMLElement {
   }
   set greeting(val) {
     this._greeting = val;
-    this.render();
+    // this.render();
+    console.log('greeting', val);
   }
   get greeting() {
     return this._greeting;
@@ -46,6 +48,6 @@ class MyClock extends HTMLElement {
   }
 
 }
-// customElements.define('my-component', MyComponent);
-// customElements.define('my-clock', MyClock);
+customElements.define('my-component', MyComponent);
+customElements.define('my-clock', MyClock);
 ReactDom.render(<App />, document.getElementById('root'));
