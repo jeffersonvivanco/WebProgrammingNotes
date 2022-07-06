@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HeroesComponent } from './heroes.component';
-import {ActivatedRoute} from "@angular/router";
-import {HeroesService} from "./heroes.service";
-import {empty, of} from "rxjs";
+import {ActivatedRoute} from '@angular/router';
+import {HeroesService} from './heroes.service';
+import {empty, of} from 'rxjs';
 
 describe('HeroesComponent', () => {
   let component: HeroesComponent;
