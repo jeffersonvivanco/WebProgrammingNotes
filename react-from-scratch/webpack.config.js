@@ -56,11 +56,10 @@ module.exports = {
   },
   // we set up webpack-dev-server in the devServer property.
   devServer: {
-    contentBase: path.join(__dirname, 'public/'),
+    static: path.join(__dirname, 'public/'),
     port: 3000,
     // tells our server where the bundle code actually is
-    publicPath: 'http://localhost:3000/dist/',
-    hotOnly: true
+    hot: "only"
   },
   /*
   finally, since we want to use Hot Module Replacement so we don't have to constantly refresh to see our changes.
