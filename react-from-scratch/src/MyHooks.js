@@ -29,6 +29,7 @@ Hooks - New to 16.8
       * you can use the State hook more than once in a single component
 
     * useEffect
+      * called after each render
       * You've likely performed data fetching, subscriptions, or manually changing the DOM from
         React components before. We call these operations side effects or effects for short because
         they can affect other components and can't be done during rendering.
@@ -74,6 +75,17 @@ Hooks - New to 16.8
         const [todos, dispatch] = useReducer(todosReducer);
         // ...
       }
+    * useMemo - returns a memoized value. Pass a "create" function and an array of dependencies,
+      useMemo will only recompute the memoized value when one of the dependencies has changed. This
+      optimization helps to avoid expensive calculations on every render.
+      * Remember that the function passed to useMemo runs during rendering. Don't do anything there
+        that you wouldn't normally do while rendering. For example, side effects belong in useEffect,
+        not useMemo.
+      * If no array is provided, a new value will be computed on every render.
+    * useCallback - returns a memoized callback. Pass an inline callback and an array of dependencies.
+      * useCallback will return a memoized version of the callback that only changes if one of the
+        dependencies has changed.
+      * useCallback(fn, deps) is equivalent to useMemo(() => fn, deps).
 
 * Rules of Hooks
   * Only call Hooks at the top level. Don't call Hooks inside loops, conditions, or nested functions.
@@ -117,29 +129,67 @@ Hooks - New to 16.8
 
  */
 
-import React, {useEffect, useReducer, useState} from "react";
-
-const initialState = {count: 0}
+import React, {useEffect, useMemo, useReducer, useState} from "react";
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'increment':
-      return {count: state.count + 1};
-    case 'decrement':
-      return {count: state.count - 1};
+    case 'add':
+      console.log('[MyReducerTodoList] reducer add action, state', state, 'action', action);
+      state.todos.push(action.value);
+      return {todos: state.todos};
+    case 'remove':
+      console.log('[MyReducerTodoList] reducer remove action, state', state, 'action', action);
+      const index = state.todos.find(val => val === action.value);
+      state.todos.splice(index, 1);
+      return {todos: state.todos};
     default:
       throw new Error();
   }
 }
 
-function MyReducerCounter() {
+function MyReducerTodoList() {
+  const initialState = {todos: []}
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [todoInput, setTodoInput] = useState('');
+  const addTodo = () => {
+    if (todoInput?.length > 0) {
+      dispatch({type: 'add', value: todoInput});
+      setTodoInput('');
+    }
+  }
+  const removeTodo = (todo) => dispatch({type: 'remove', value: todo});
   return (
     <>
-    Count: {state.count}
-      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
-      <button onClick={() => dispatch({type: 'increment'})}>+</button>
+      <h1>TodoList using useReducer hook</h1>
+      <ul>
+        {state.todos.map((todo, index) =>
+          <li key={index}>
+            <button onClick={removeTodo}>Remove</button> {todo}
+          </li>)}
+      </ul>
+      <input value={todoInput} onChange={(e) => {
+        setTodoInput(e.target.value);
+      }
+      } placeholder="Type Todo here"/>
+      <button onClick={addTodo}>Add Todo</button>
     </>
+  )
+}
+
+const add = (num) => {
+  console.log('computing new num', num);
+  return num + 1;
+}
+function MyMemoizedAddComponent({num, num2}) {
+
+  const [number, setNumber] = useState(1);
+  const newNum = useMemo(() => add(num2), [num2]);
+
+  return (
+    <div>
+      <h1>{num2} + 1 = {newNum}</h1>
+      <button onClick={() => setNumber(number + 1)}>Re-render</button>
+    </div>
   )
 }
 
@@ -147,18 +197,21 @@ function MyReducerCounter() {
 function MyHooks() {
 
   const [count, setCount] = useState(0); // useState Hook
+  const [count2, setCount2] = useState(0)
 
   useEffect(() => {
     document.title = `You clicked ${count} times`;
   })
   return (
-    <div>
+    <div style={{border: '1px solid black'}}>
+      <h1>To do list using Hooks</h1>
       <p>You clicked {count} times</p>
+      <p>Count 2 {count2}</p>
       <button onClick={() => setCount(count + 1)}>Click me</button>
-      <MyReducerCounter />
+      <button onClick={() => setCount(0)}>Reset Count</button>
+      <MyMemoizedAddComponent num={count} num2={count2}/>
+      <MyReducerTodoList />
     </div>
   )
 }
-
-// todo: Look up why cant export function as function without default
 export default MyHooks;

@@ -6,6 +6,10 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 
+import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
+import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
+import 'ag-grid-enterprise';
+
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 

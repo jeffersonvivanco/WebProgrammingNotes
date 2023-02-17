@@ -55,3 +55,5 @@ than simple CLI usage. We can specify loader rules, plugins, resolve options and
 * Run `npm run build`
 * Custom parameters can be passed to webpack by adding two dashes between the `npm run build` command and your parameters
 e.g. `npm run build -- --colors`. 
+
+## Module Federation
