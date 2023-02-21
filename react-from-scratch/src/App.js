@@ -11,7 +11,6 @@ import MyRefsAndDom from "./MyRefsAndDom";
 import {MyConditionalRendering} from "./MyConditionalRendering";
 import {MyListsAndKeys} from "./MyListsAndKeys";
 import MyHooks from "./MyHooks";
-import MyHooksDataFetching from "./MyHooksDataFetching";
 import MyContext from "./MyContext";
 
 class App extends Component {
@@ -29,7 +28,6 @@ class App extends Component {
         <MyForms greeting={'good night'}/>
         <MyRefsAndDom />
         <MyHooks />
-        <MyHooksDataFetching />
         <MyContext />
         <my-component greeting={JSON.stringify(val)}/>
       </section>

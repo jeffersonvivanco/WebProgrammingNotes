@@ -86,6 +86,73 @@ Hooks - New to 16.8
       * useCallback will return a memoized version of the callback that only changes if one of the
         dependencies has changed.
       * useCallback(fn, deps) is equivalent to useMemo(() => fn, deps).
+      * The key difference is that useMemo returns a memoized value, whereas useCallback returns a memoized function.
+        That means that useMemo is used for storing a computed value, while useCallback returns a function that you can call
+        later on.
+    * useRef - returns a mutable ref object whose .current property is initialized to the passed argument (initialValue).
+      The returned object will persist for the full lifetime of the component.
+      * Essentially, useRef is a like a "box" that can hold a mutable value in its .current property.
+      * You might be familiar with refs primarily as a way to access the DOM. If you pass a ref object to React with
+        <div ref={myRef} />, React will set its .current property to the corresponding DOM node whenever that node changes.
+      * useRef() is useful for more than the ref attribute. It's handy for keeping any mutable value around similar to how
+        you'd use instance fields in classes.
+      * This works because useRef() creates a plain JS object. The only difference between useRef() and creating a {current: ...}
+        object yourself is that useRef will give you the same ref object on every render.
+      * Keep in mind that useRef doesn't notify you when its content changes. Mutating the .current property doesn't cause
+        a re-render. If you want to run some code when React attaches or detaches a ref to a DOM node, you may want to use
+        a callback ref instead.
+        ex:
+        ...
+        const measuredRef = useCallback(node => {
+        ...
+        }, []);
+        return (
+        <h1 ref={measuredRed}>Hello world</h1>
+        );
+     * useImperativeHandle - customizes the instance value that is exposed to parent components when using ref. As always,
+       imperative code using refs should be avoided in most cases. useImperativeHandle should be used with forwardRef.
+       useImperativeHandle(ref, createHandle, [deps])
+     * useDeferredValue - accepts a value nd returns a new copy of the value that will defer to more urgent updates. If the
+       current render is the result of an urgent update, like user input, React will return the previous value and then render
+       the new value after the urgent render has completed. The hook is similar to user-space hooks which use debouncing or
+       throttling to defer updates.
+       ex:
+       const [value, setValue] = useState(0);
+       const deferredValue = useDeferredValue(value);
+       useEffect(() => {}, [deferredValue])
+     * useTransition - returns a stateful value for the pending state of the transition, and a function to start it.
+       * this hook makes working with slow, computationally intense state updates so much easier since now we can tell
+         React to prioritize those updates at a lower level to more important updates which makes your application seem
+         much more performant to users
+         ex:
+         ...
+         const [isPending, startTransition] = useTransition()
+         function handleChange(e) {
+         setName(e.target.value);
+         startTransition(() => {
+           setList...
+           })
+         }
+         return ...
+      * useId - is a hook for generating unique IDs that are stable across the server and client, while avoiding hydration
+        mismatches.
+        * For multiple IDs in the same component, append a suffix using the same id:
+        function NameFields() {
+        const id = useId();
+        return (
+          <div>
+            <label htmlFor={id + '-firstName'}>First Name</label>
+            <div>
+              <input id={id + '-firstName'} type="text" />
+            </div>
+            <label htmlFor={id + '-lastName'}>Last Name</label>
+            <div>
+              <input id={id + '-lastName'} type="text" />
+            </div>
+          </div>
+        );
+      }
+
 
 * Rules of Hooks
   * Only call Hooks at the top level. Don't call Hooks inside loops, conditions, or nested functions.
@@ -130,6 +197,7 @@ Hooks - New to 16.8
  */
 
 import React, {useEffect, useMemo, useReducer, useState} from "react";
+import {helloApi, useDataApi, byeApi, useDataApi2, greetApi} from "./hooks/dataFetching";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -176,40 +244,33 @@ function MyReducerTodoList() {
   )
 }
 
-const add = (num) => {
-  console.log('computing new num', num);
-  return num + 1;
-}
-function MyMemoizedAddComponent({num, num2}) {
-
-  const [number, setNumber] = useState(1);
-  const newNum = useMemo(() => add(num2), [num2]);
-
-  return (
-    <div>
-      <h1>{num2} + 1 = {newNum}</h1>
-      <button onClick={() => setNumber(number + 1)}>Re-render</button>
-    </div>
-  )
-}
-
-
 function MyHooks() {
-
-  const [count, setCount] = useState(0); // useState Hook
-  const [count2, setCount2] = useState(0)
+  // const [messageState, setUrl] = useDataApi('hello', {});
+  const [messageState, setApi] = useDataApi2();
+  const [count, setCount] = useState(0)
+  const chainApi = () => {
+    setApi(greetApi().then(resp => {
+      console.log('resp in chain', resp);
+      setCount(count + 1);
+      if (resp.greet === 'hello') {
+        return helloApi();
+      }
+      return byeApi();
+    }))
+  }
 
   useEffect(() => {
-    document.title = `You clicked ${count} times`;
-  })
+    console.log('Message call is happening', messageState);
+  }, [messageState])
+
   return (
     <div style={{border: '1px solid black'}}>
-      <h1>To do list using Hooks</h1>
-      <p>You clicked {count} times</p>
-      <p>Count 2 {count2}</p>
-      <button onClick={() => setCount(count + 1)}>Click me</button>
-      <button onClick={() => setCount(0)}>Reset Count</button>
-      <MyMemoizedAddComponent num={count} num2={count2}/>
+      <h1>My Hooks Component</h1>
+      <h2>Called chain call {count} times</h2>
+      <h2>API Calls with Hooks, message from server: {messageState?.data?.message}</h2>
+      <button onClick={() => setApi(() => byeApi())}>Say Bye</button>
+      <button onClick={() => setApi(() => helloApi())}>Reset Greeting</button>
+      <button onClick={() => chainApi()}>Say Greeting</button>
       <MyReducerTodoList />
     </div>
   )
