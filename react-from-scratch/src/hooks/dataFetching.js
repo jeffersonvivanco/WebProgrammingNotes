@@ -10,7 +10,16 @@ export const byeApi = () => {
 }
 
 export const greetApi = () => {
-  return fetch(`${DOMAIN}/greet`).then(resp => resp.json());
+  return fetch(`${DOMAIN}/greet2`).then(resp => {
+    if (resp.ok) {
+      return resp.json();
+    }
+    /*
+    - We expect a json error object from the server
+    - We want the promise to reject any future calls if available
+     */
+    return resp.json().then(resp => Promise.reject(resp));
+  });
 }
 
 /*
@@ -26,7 +35,7 @@ const dataFetchReducer = (state, action) => {
     case 'FETCH_SUCCESS':
       return {...state, data: action.payload, isLoading: false, isError: false};
     case 'FETCH_ERROR':
-      return {...state, isError: true, isLoading: false};
+      return {...state, isError: true, isLoading: false, data: action.payload};
     default:
       throw new Error();
   }
@@ -74,7 +83,7 @@ useDataApi2
  */
 export const useDataApi2 = (apiFunction) => {
   const [state, dispatch] = useReducer(dataFetchReducer, {isLoading: false, isError: false, data: null});
-  const [api, setApi] = useState((apiFunction));
+  const [api, setApi] = useState(apiFunction);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +92,7 @@ export const useDataApi2 = (apiFunction) => {
         const result = await api;
         dispatch({type: 'FETCH_SUCCESS', payload: result});
       } catch (error) {
-        dispatch({type: 'FETCH_ERROR'});
+        dispatch({type: 'FETCH_ERROR', payload: error});
       }
     }
     if (api)

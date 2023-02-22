@@ -267,6 +267,9 @@ function MyHooks() {
     <div style={{border: '1px solid black'}}>
       <h1>My Hooks Component</h1>
       <h2>Called chain call {count} times</h2>
+      {messageState?.isError &&
+        <h2>Error from server with message {messageState?.data?.message}</h2>
+      }
       <h2>API Calls with Hooks, message from server: {messageState?.data?.message}</h2>
       <button onClick={() => setApi(() => byeApi())}>Say Bye</button>
       <button onClick={() => setApi(() => helloApi())}>Reset Greeting</button>
